@@ -1,4 +1,4 @@
-// Package auth implements cpsync's authentication building blocks:
+// Package auth implements cbshare's authentication building blocks:
 //
 //	limiter.go   per-IP lockout after repeated failures
 //	sessions.go  in-memory browser sessions with an inactivity timeout

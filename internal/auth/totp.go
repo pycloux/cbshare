@@ -36,7 +36,7 @@ type Enrollment struct {
 // several users and servers can be told apart.
 func NewEnrollment(account string) (Enrollment, error) {
 	key, err := totp.Generate(totp.GenerateOpts{
-		Issuer:      "cpsync",
+		Issuer:      "cbshare",
 		AccountName: account,
 		Period:      uint(validateOpts.Period),
 		Digits:      validateOpts.Digits,

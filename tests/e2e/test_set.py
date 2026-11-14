@@ -19,7 +19,7 @@ def test_every_visitor_sees_the_pin_screen_before_setup(server, client):
     for page in (client(), client()):
         page.goto(server.base_url + "/")
         expect_screen(page, "setup-pin")
-        expect(page.locator("#screen-setup-pin h1")).to_have_text("Set up cpsync")
+        expect(page.locator("#screen-setup-pin h1")).to_have_text("Set up cbshare")
         page.reload()
         expect_screen(page, "setup-pin")
         for other in ("login", "chat"):
@@ -92,9 +92,9 @@ def test_the_qr_code_is_the_admin_account(server, client):
     uri = urlparse(codes[0].text)
     assert uri.scheme == "otpauth" and uri.netloc == "totp"
     host = server.base_url.removeprefix("https://")
-    assert unquote(uri.path) == f"/cpsync:admin@{host}", "the entry is labelled with the account and server"
+    assert unquote(uri.path) == f"/cbshare:admin@{host}", "the entry is labelled with the account and server"
     params = parse_qs(uri.query)
-    assert params["issuer"] == ["cpsync"]
+    assert params["issuer"] == ["cbshare"]
     secret = params["secret"][0]
 
     page.click("#screen-setup-qr summary")

@@ -15,7 +15,7 @@ const (
 )
 
 // SystemAuthor is the author recorded for system messages.
-const SystemAuthor = "cpsync"
+const SystemAuthor = "cbshare"
 
 // ErrNoMessage is returned when a message or file does not exist.
 var ErrNoMessage = errors.New("message not found")

@@ -25,8 +25,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/pycloux/cpsync/internal/auth"
-	"github.com/pycloux/cpsync/internal/store"
+	"github.com/pycloux/cbshare/internal/auth"
+	"github.com/pycloux/cbshare/internal/store"
 )
 
 // userView is a user as the admin sees it in the list.
@@ -90,7 +90,7 @@ func (s *Server) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	case errors.Is(err, store.ErrUserLimit):
 		writeError(w, http.StatusConflict, "user_limit",
-			fmt.Sprintf("cpsync is limited to %d users. Delete a user first, or raise max_users.", s.cfg.MaxUsers))
+			fmt.Sprintf("cbshare is limited to %d users. Delete a user first, or raise max_users.", s.cfg.MaxUsers))
 		return
 	case err != nil:
 		s.internalError(w, err)

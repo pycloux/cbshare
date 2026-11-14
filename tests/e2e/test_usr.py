@@ -70,7 +70,7 @@ def test_add_a_user_and_sign_in(ready, client):
     expect(dlg.locator(".note")).to_contain_text("shown only once")
     uri = urlparse(read_qr(admin))
     host = ready.url.removeprefix("https://")
-    assert unquote(uri.path) == f"/cpsync:Bob Smith@{host}"
+    assert unquote(uri.path) == f"/cbshare:Bob Smith@{host}"
     secret = parse_qs(uri.query)["secret"][0]
     dlg.locator("summary").click()
     assert admin.inner_text("#user-qr-secret").strip() == secret
@@ -99,8 +99,8 @@ def test_add_a_user_and_sign_in(ready, client):
 def test_username_rules(ready, client):
     api = admin_api(ready)
     for name, error in (("   ", "Enter a username."),
-                        ("cpsync", '"cpsync" is reserved for system messages.'),
-                        ("CPSYNC", '"cpsync" is reserved for system messages.'),
+                        ("cbshare", '"cbshare" is reserved for system messages.'),
+                        ("CBSHARE", '"cbshare" is reserved for system messages.'),
                         ("admin", '"admin" is reserved for the admin account.'),
                         ("Admin", '"admin" is reserved for the admin account.'),
                         ("x" * 33, "Use 32 characters or fewer.")):
@@ -170,7 +170,7 @@ def test_the_qr_code_is_shown_only_once(ready, client):
 
 @pytest.mark.case("USR-05")
 def test_an_unused_qr_code_expires(make_server):
-    srv = make_server().start(password=ADMIN_PASSWORD, env={"CPSYNC_TEST_ENROLMENT_WINDOW": "6s"})
+    srv = make_server().start(password=ADMIN_PASSWORD, env={"CBSHARE_TEST_ENROLMENT_WINDOW": "6s"})
     admin_secret = ApiClient(srv.base_url).setup(srv.pin)
     accounts = Accounts(lambda: srv.base_url, admin_secret)
     api = accounts.admin()

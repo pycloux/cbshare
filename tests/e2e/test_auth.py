@@ -94,7 +94,7 @@ def test_closing_the_browser_ends_the_session(ready, browser_type, browser_type_
 
     ctx = browser_type.launch_persistent_context(profile, **args)
     sign_in(ctx.new_page(), ready.url, ready.accounts, "Anna laptop")
-    session = [c for c in ctx.cookies() if c["name"] == "cpsync_session"]
+    session = [c for c in ctx.cookies() if c["name"] == "cbshare_session"]
     assert session and session[0]["expires"] == -1, "the session cookie must end with the browser"
     ctx.close()  # every window closed
 

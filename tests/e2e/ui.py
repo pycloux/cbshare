@@ -1,4 +1,4 @@
-"""Browser helpers: the cpsync screens, driven like a person would."""
+"""Browser helpers: the cbshare screens, driven like a person would."""
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ def expect_screen(page: Page, name: str, timeout: float = 10_000) -> None:
 
 
 def sign_in(page: Page, base_url: str, secret: "str | Accounts", name: str) -> Page:
-    """Opens cpsync and signs in as name with a current code. secret is the
+    """Opens cbshare and signs in as name with a current code. secret is the
     user's TOTP secret, or an Accounts that provides (or creates) the user."""
     if isinstance(secret, Accounts):
         secret = secret.secret(name)

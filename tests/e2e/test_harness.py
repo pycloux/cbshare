@@ -8,7 +8,7 @@ from harness import ADMIN_PASSWORD, fingerprint_of, peer_certificate
 
 @pytest.mark.p1
 def test_a_port_taken_by_another_server_is_detected(make_server, monkeypatch):
-    """Two parallel tests may pick the same free port. The second cpsync
+    """Two parallel tests may pick the same free port. The second cbshare
     then fails to bind, while the port briefly answers with the first
     one: the harness must notice and retry on another port."""
     first = make_server("first").start(password=ADMIN_PASSWORD)

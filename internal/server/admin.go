@@ -15,8 +15,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/pycloux/cpsync/internal/auth"
-	"github.com/pycloux/cpsync/internal/store"
+	"github.com/pycloux/cbshare/internal/auth"
+	"github.com/pycloux/cbshare/internal/store"
 )
 
 // pendingRotation is a new secret for the admin account, shown to the
@@ -61,7 +61,7 @@ func (s *Server) handleAdminLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Only the Argon2id hash of the password is stored (see firstStart in
-	// cmd/cpsync). A failure here counts toward the lockout like a wrong
+	// cmd/cbshare). A failure here counts toward the lockout like a wrong
 	// one-time code, because it is the same kind of guessing.
 	hash, ok, err := s.store.Setting(r.Context(), store.SettingAdminHash)
 	if err != nil {

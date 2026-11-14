@@ -2,7 +2,7 @@
 
 ## Signing in
 
-Open the cpsync address and enter your username and the current 6-digit code from your authenticator app. The admin gave you both: your account and its QR code, which you added to the app. The browser remembers your username, so next time you only type the code.
+Open the cbshare address and enter your username and the current 6-digit code from your authenticator app. The admin gave you both: your account and its QR code, which you added to the app. The browser remembers your username, so next time you only type the code.
 
 ![Sign-in screen](images/sign-in.png){ width="480" }
 
@@ -25,19 +25,19 @@ When that happens, the sign-in screen tells you why:
 
 ![The chat](images/chat.png)
 
-Everyone signed in sees the same conversation. Each name gets its own colour stripe, and your own messages are on the right. System messages from cpsync, such as failed sign-in alerts or users added by the admin, appear in amber in the middle. Messages of a user the admin removed stay, marked "(deleted user)".
+Everyone signed in sees the same conversation. Each name gets its own colour stripe, and your own messages are on the right. System messages from cbshare, such as failed sign-in alerts or users added by the admin, appear in amber in the middle. Messages of a user the admin removed stay, marked "(deleted user)".
 
-The indicator next to the cpsync name shows how the page stays up to date:
+The indicator next to the cbshare name shows how the page stays up to date:
 
 | Indicator | Meaning |
 | --- | --- |
 | **Live** (green) | New messages appear instantly. |
 | **Updates every 3 s** (green) | The server uses [polling mode](configuration.md#live-updates); new messages appear within a few seconds. |
-| **Reconnecting** (red) | The connection dropped; cpsync reconnects by itself. |
+| **Reconnecting** (red) | The connection dropped; cbshare reconnects by itself. |
 
-When the tab is in the background, its title shows how many new messages arrived, such as `(2) cpsync`.
+When the tab is in the background, its title shows how many new messages arrived, such as `(2) cbshare`.
 
-cpsync follows your system's light or dark mode, and works on phones and tablets too.
+cbshare follows your system's light or dark mode, and works on phones and tablets too.
 
 <div class="grid" markdown>
 
@@ -61,7 +61,7 @@ Every message has a **Copy** button that copies its text exactly, ready to paste
 
 Press **+** next to the message box and choose a file, or drag a file anywhere onto the page. If the message box contains text, it becomes the file's caption.
 
-Files can be up to 20 MB by default. Others get a **Download** button; files are always downloaded, never opened inside cpsync.
+Files can be up to 20 MB by default. Others get a **Download** button; files are always downloaded, never opened inside cbshare.
 
 ## Editing and deleting
 

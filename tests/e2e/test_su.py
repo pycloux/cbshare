@@ -22,9 +22,9 @@ def test_first_start_creates_the_database(make_server):
     srv.start(password=ADMIN_PASSWORD)
     out = srv.output
 
-    assert "Database cpsync.db created." in out or f"Database {srv.db} created." in out
+    assert "Database cbshare.db created." in out or f"Database {srv.db} created." in out
     assert "DATABASE KEY" in out and srv.key and KEY_FORMAT.match(srv.key), out
-    assert f"Restart with:  cpsync --key {srv.key}" in out
+    assert f"Restart with:  cbshare --key {srv.key}" in out
     for line in ("port ", "max messages        20", "max file size       20 MB", "update mode         sse",
                  "failed attempts     5 before a 5m0s lockout", "session timeout     30m0s"):
         assert line in out, f"missing {line!r} in the configuration"
@@ -129,7 +129,7 @@ def test_password_and_key_are_mutually_exclusive_and_required(make_server):
     srv = make_server()
     res = srv.run()
     assert res.returncode != 0
-    assert "missing --password (first start) or --key (restart); run cpsync --help" in res.stderr
+    assert "missing --password (first start) or --key (restart); run cbshare --help" in res.stderr
     res = srv.run("--password", "x", "--key", "y")
     assert res.returncode != 0
     assert "use either --password (first start) or --key (restart), not both" in res.stderr
@@ -143,13 +143,13 @@ def cmdline(pid: int) -> str:
 @pytest.mark.case("SU-08")
 def test_password_and_key_from_environment_variables(make_server):
     srv = make_server()
-    srv.start(env={"CPSYNC_PASSWORD": ADMIN_PASSWORD})
+    srv.start(env={"CBSHARE_PASSWORD": ADMIN_PASSWORD})
     assert "DATABASE KEY" in srv.output and srv.key
     assert ADMIN_PASSWORD not in cmdline(srv.proc.pid)
     key = srv.key
     srv.stop()
 
-    srv.start(env={"CPSYNC_KEY": key})
+    srv.start(env={"CBSHARE_KEY": key})
     assert "unlocked" in srv.output
     assert key not in cmdline(srv.proc.pid)
     ApiClient(srv.base_url).setup(srv.pin)  # a working server
@@ -212,11 +212,11 @@ def test_help_and_version(make_server):
     srv = make_server()
     res = srv.run("--help")
     assert res.returncode == 0
-    for text in ("First start:  cpsync --password", "Restart:      cpsync --key", "-max-messages",
+    for text in ("First start:  cbshare --password", "Restart:      cbshare --key", "-max-messages",
                  "number of messages kept in the chat (default 20)", "-mode"):
         assert text in res.stderr, text
     res = srv.run("--version")
-    assert res.returncode == 0 and re.fullmatch(r"cpsync \S+\n", res.stdout)
+    assert res.returncode == 0 and re.fullmatch(r"cbshare \S+\n", res.stdout)
     assert not any(srv.workdir.iterdir()), "no database is created"
 
 

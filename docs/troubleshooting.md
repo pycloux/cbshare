@@ -3,13 +3,13 @@
 ## The server doesn't start
 
 **`first start interrupted: no database was created; start again with --password`**
-: Ctrl+C was pressed before the key was printed. cpsync removed the incomplete database, so you can simply start again with `--password`.
+: Ctrl+C was pressed before the key was printed. cbshare removed the incomplete database, so you can simply start again with `--password`.
 
 **`database already exists ... (restart with --key, or remove the file to start over)`**
 : `--password` is only for the first start. Restart with `--key` and the key printed at first start.
 
-**`this database was created by cpsync v0.2, which this version cannot use`**
-: cpsync v0.3 replaced the shared code with one code per user and does not convert v0.2 databases. Stop the server, delete the database file, and start again with `--password`. The old messages are lost, and everyone needs a new QR code from the admin.
+**`this database was created by cbshare v0.2, which this version cannot use`**
+: cbshare v0.3 replaced the shared code with one code per user and does not convert v0.2 databases. Stop the server, delete the database file, and start again with `--password`. The old messages are lost, and everyone needs a new QR code from the admin.
 
 **`database not found ... (start with --password to create it)`**
 : The `--db` path doesn't point to an existing database. Check the path, or create a new database with `--password`.
@@ -31,20 +31,20 @@
 If the server printed **"WARNING: no network address was found"**, it could not find a network connection when it started and listens on `127.0.0.1` only, which other machines can't reach. Connect the server to the network and restart it, or choose an address with `--bind` (`--bind 0.0.0.0` listens on every interface). Otherwise:
 
 - Check that both machines are on the same network, and that you use the address printed by the server.
-- Allow cpsync through the firewall of the server: on Windows, allow it on private networks when asked; on Linux, open the port (for example `sudo ufw allow 8443/tcp`).
-- cpsync listens on one address by default. If the server has several network cards and you use a different one, start it with `--bind 0.0.0.0`.
+- Allow cbshare through the firewall of the server: on Windows, allow it on private networks when asked; on Linux, open the port (for example `sudo ufw allow 8443/tcp`).
+- cbshare listens on one address by default. If the server has several network cards and you use a different one, start it with `--bind 0.0.0.0`.
 - The address must start with `https://`.
 
 ## The browser warns about the certificate
 
-This is expected with the self-signed certificate: it isn't issued by an authority your browser knows. Compare the fingerprint in the certificate details with the one printed in the console, then continue. Browsers remember the choice, and cpsync reuses its certificate across restarts.
+This is expected with the self-signed certificate: it isn't issued by an authority your browser knows. Compare the fingerprint in the certificate details with the one printed in the console, then continue. Browsers remember the choice, and cbshare reuses its certificate across restarts.
 
 You see the warning again if the server address changed, or the certificate was renewed close to its expiry. To avoid it completely, use a [certificate of your own](configuration.md#tls-certificate).
 
 ## "That username or code is not valid"
 
 - Check your username: it is the one the admin created for you (letter case doesn't matter).
-- Use your own `cpsync` entry for this server in your authenticator app (labelled with your username and the server address), and the code currently shown.
+- Use your own `cbshare` entry for this server in your authenticator app (labelled with your username and the server address), and the code currently shown.
 - One-time codes depend on the time. Check that the clocks of your phone and of the server are correct; a difference of more than about 30 seconds makes codes fail.
 - Each code works only once. If you just signed in somewhere else, wait for the next code.
 - If you never signed in with a new QR code, it expires after 24 hours. If the admin gave you a new QR code, revoked your access or removed your account, your code no longer works. In each case, ask the admin for a new QR code.

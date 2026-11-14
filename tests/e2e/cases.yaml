@@ -366,7 +366,7 @@ USR-05:
   title: "An unused QR code expires after 24 hours"
   priority: P1
   automation: automated
-  manual_part: "The real 24-hour window (the test build shortens it with CPSYNC_TEST_ENROLMENT_WINDOW)."
+  manual_part: "The real 24-hour window (the test build shortens it with CBSHARE_TEST_ENROLMENT_WINDOW)."
 USR-06:
   title: "Revoke signs the user out and blocks sign-in"
   priority: P1
@@ -403,7 +403,7 @@ USR-14:
   title: "A v0.2 database is refused with a clear message"
   priority: P2
   automation: manual
-  reason: "Needs a database created by cpsync v0.2; the Go test TestOldSchemaRefused covers the refusal."
+  reason: "Needs a database created by cbshare v0.2; the Go test TestOldSchemaRefused covers the refusal."
 SEC-01:
   title: "Security headers"
   priority: P1

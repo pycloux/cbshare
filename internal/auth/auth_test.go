@@ -215,7 +215,7 @@ func TestTOTP(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.HasPrefix(e.QR, "data:image/png;base64,") || !strings.HasPrefix(e.URI, "otpauth://totp/cpsync:") {
+	if !strings.HasPrefix(e.QR, "data:image/png;base64,") || !strings.HasPrefix(e.URI, "otpauth://totp/cbshare:") {
 		t.Fatalf("unexpected enrollment %+v", e.URI)
 	}
 	now := time.Now()

@@ -84,7 +84,7 @@ def test_reconnection_after_a_network_outage(ready, client, request, browser_nam
     if browser_name == "webkit":
         request.applymarker(pytest.mark.xfail(
             strict=True, reason="WebKit never notices the closed event stream, so the page stays stale "
-                                "(https://github.com/pycloux/cpsync/issues/21)"))
+                                "(https://github.com/pycloux/cbshare/issues/21)"))
     proxy = CuttableProxy(ready.server.port)
     try:
         page = sign_in(client(), proxy.url, ready.accounts, "nas")
@@ -130,7 +130,7 @@ HIDE = """hidden => {
 def test_unread_count_in_the_tab_title(ready, client):
     page = sign_in(client(), ready.url, ready.accounts, "nas")
     ready.accounts.secret("Anna laptop")  # created (and announced) before
-    expect(page).to_have_title("cpsync")
+    expect(page).to_have_title("cbshare")
     page.evaluate(HIDE, True)  # the tab goes to the background
 
     anna = ready.api().login(ready.accounts, "Anna laptop")
@@ -140,10 +140,10 @@ def test_unread_count_in_the_tab_title(ready, client):
         expect(message(page, f"while away {i}")).to_be_visible()
     me.post_text("my own message")
     expect(message(page, "my own message")).to_be_visible()
-    expect(page).to_have_title("(3) cpsync")  # own messages don't count
+    expect(page).to_have_title("(3) cbshare")  # own messages don't count
 
     page.evaluate(HIDE, False)
-    expect(page).to_have_title("cpsync")
+    expect(page).to_have_title("cbshare")
 
 
 @pytest.mark.case("LIVE-06")

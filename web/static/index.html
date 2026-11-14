@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
-<title>cpsync</title>
+<title>cbshare</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 <script src="app.js" defer></script>
@@ -16,8 +16,8 @@
   <div class="panel">
     <div class="cables" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
     <form class="panel-body" id="form-setup-pin">
-      <p class="wordmark">cpsync</p>
-      <h1>Set up cpsync</h1>
+      <p class="wordmark">cbshare</p>
+      <h1>Set up cbshare</h1>
       <p>Enter the setup PIN printed in the server console when it started.</p>
       <div class="field">
         <label for="setup-pin">Setup PIN</label>
@@ -34,10 +34,10 @@
   <div class="panel">
     <div class="cables" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
     <div class="panel-body">
-      <p class="wordmark">cpsync</p>
+      <p class="wordmark">cbshare</p>
       <h1>Add your admin code to an authenticator</h1>
       <p>Scan this code with an authenticator app. It is your own code for the <strong>admin</strong> account: don't share it. You'll add the other people from <strong>Admin tools → Users</strong>, each with their own code.</p>
-      <img class="qr" id="setup-qr-img" alt="QR code for the cpsync admin account">
+      <img class="qr" id="setup-qr-img" alt="QR code for the cbshare admin account">
       <details class="secret">
         <summary>Can't scan? Enter the key by hand</summary>
         <code id="setup-secret"></code>
@@ -54,9 +54,9 @@
   <div class="panel">
     <div class="cables" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
     <form class="panel-body" id="form-login">
-      <p class="wordmark">cpsync</p>
+      <p class="wordmark">cbshare</p>
       <h1>Sign in</h1>
-      <p>Enter your username and the 6-digit code shown for cpsync in your authenticator app.</p>
+      <p>Enter your username and the 6-digit code shown for cbshare in your authenticator app.</p>
       <div class="field">
         <label for="login-username">Username</label>
         <input class="input" id="login-username" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="32" required>
@@ -74,7 +74,7 @@
 <!-- Chat -->
 <section class="app" id="screen-chat" hidden>
   <header class="topbar">
-    <p class="wordmark">cpsync</p>
+    <p class="wordmark">cbshare</p>
     <span class="status" id="status"><span id="status-text">Connecting</span></span>
     <span class="spacer"></span>
     <span class="me"><span id="me-name"></span><span class="badge" id="admin-badge" hidden>Admin</span></span>
@@ -140,7 +140,7 @@
     </div>
     <div id="rotate-step-2" hidden>
       <h2>Your new admin code</h2>
-      <img class="qr" id="rotate-qr-img" alt="New QR code for the cpsync admin account">
+      <img class="qr" id="rotate-qr-img" alt="New QR code for the cbshare admin account">
       <details class="secret">
         <summary>Can't scan? Enter the key by hand</summary>
         <code id="rotate-secret"></code>
@@ -188,7 +188,7 @@
       <code id="user-qr-secret"></code>
     </details>
     <p id="user-qr-deadline"></p>
-    <p class="note warn">This QR code is shown only once. Send it to the user through a private channel, such as in person or in an encrypted messenger. Never post it in the cpsync chat.</p>
+    <p class="note warn">This QR code is shown only once. Send it to the user through a private channel, such as in person or in an encrypted messenger. Never post it in the cbshare chat.</p>
     <div class="dialog-actions">
       <button class="btn" type="button" data-close>Done</button>
     </div>

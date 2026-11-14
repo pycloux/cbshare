@@ -1,8 +1,8 @@
-site_name: cpsync
+site_name: cbshare
 site_description: Share text snippets and small files between machines on your LAN.
-site_url: https://pycloux.github.io/cpsync/
-repo_url: https://github.com/pycloux/cpsync
-repo_name: pycloux/cpsync
+site_url: https://pycloux.github.io/cbshare/
+repo_url: https://github.com/pycloux/cbshare
+repo_name: pycloux/cbshare
 edit_uri: edit/main/docs/
 
 # docs/requirements.txt lists the tools that build this site; it is not a page.
@@ -38,7 +38,7 @@ nav:
   - Getting started:
       - Installation: installation.md
       - First-time setup: first-start.md
-  - Using cpsync:
+  - Using cbshare:
       - Daily use: using.md
       - Administration: administration.md
   - Reference:

@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pycloux/cpsync/internal/config"
-	"github.com/pycloux/cpsync/internal/store"
+	"github.com/pycloux/cbshare/internal/config"
+	"github.com/pycloux/cbshare/internal/store"
 )
 
 // unlockedAdmin signs in as the admin account and unlocks admin rights.
@@ -70,7 +70,7 @@ func TestCreateUserAndFirstSignIn(t *testing.T) {
 func TestCreateUserRules(t *testing.T) {
 	h, _ := newAdminHarnessWith(t, func(c *config.Config) { c.MaxUsers = 3 })
 	admin := unlockedAdmin(t, h)
-	for _, bad := range []string{"", "   ", "Admin", "ADMIN", "cpsync", strings.Repeat("x", 33), "bell\u0007"} {
+	for _, bad := range []string{"", "   ", "Admin", "ADMIN", "cbshare", strings.Repeat("x", 33), "bell\u0007"} {
 		r := admin.expect(admin.do("POST", "/api/admin/users", map[string]string{"name": bad}), 400)
 		if r.body["code"] != "invalid_username" {
 			t.Fatalf("%q: %v", bad, r.body)

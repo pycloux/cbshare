@@ -21,10 +21,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pycloux/cpsync/internal/auth"
+	"github.com/pycloux/cbshare/internal/auth"
 )
 
-// TestBinaryEndToEnd builds the cpsync executable and drives it like a
+// TestBinaryEndToEnd builds the cbshare executable and drives it like a
 // user: first start, setup, sign-in, a message, a restart with the key,
 // and a second sign-in with the same authenticator secret.
 func TestBinaryEndToEnd(t *testing.T) {
@@ -32,7 +32,7 @@ func TestBinaryEndToEnd(t *testing.T) {
 		t.Skip("builds and runs the binary")
 	}
 	dir := t.TempDir()
-	bin := filepath.Join(dir, "cpsync")
+	bin := filepath.Join(dir, "cbshare")
 	if runtime.GOOS == "windows" {
 		bin += ".exe"
 	}
@@ -41,7 +41,7 @@ func TestBinaryEndToEnd(t *testing.T) {
 	if out, err := build.CombinedOutput(); err != nil {
 		t.Fatalf("build: %v\n%s", err, out)
 	}
-	db := filepath.Join(dir, "data", "cpsync.db")
+	db := filepath.Join(dir, "data", "cbshare.db")
 	port := freePort(t)
 	base := "https://127.0.0.1:" + strconv.Itoa(port)
 	common := []string{"--bind", "127.0.0.1", "--port", strconv.Itoa(port), "--db", db}
@@ -50,7 +50,7 @@ func TestBinaryEndToEnd(t *testing.T) {
 	p := startBinary(t, bin, append([]string{"--password", "correct horse"}, common...)...)
 	out := p.waitFor(t, "listening on")
 	mustAccept(t, port) // the line is printed only once the port is open
-	key := regexp.MustCompile(`cpsync --key (\S+)`).FindStringSubmatch(out)
+	key := regexp.MustCompile(`cbshare --key (\S+)`).FindStringSubmatch(out)
 	pin := regexp.MustCompile(`SETUP PIN:\s+(\S+)`).FindStringSubmatch(out)
 	if key == nil || pin == nil {
 		t.Fatalf("key or PIN missing from output:\n%s", out)
@@ -111,7 +111,7 @@ func TestBinaryEndToEnd(t *testing.T) {
 }
 
 // mustAccept fails unless the port accepts a connection right away, with
-// no retry: once cpsync prints "listening on", clients may connect.
+// no retry: once cbshare prints "listening on", clients may connect.
 func mustAccept(t *testing.T, port int) {
 	t.Helper()
 	c, err := net.DialTimeout("tcp", "127.0.0.1:"+strconv.Itoa(port), 2*time.Second)
@@ -130,7 +130,7 @@ func freePort(t *testing.T) int {
 	return ln.Addr().(*net.TCPAddr).Port
 }
 
-// proc is a running cpsync process whose console output is collected.
+// proc is a running cbshare process whose console output is collected.
 type proc struct {
 	cmd *exec.Cmd
 	mu  sync.Mutex

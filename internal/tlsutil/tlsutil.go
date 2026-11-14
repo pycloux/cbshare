@@ -105,7 +105,7 @@ func SelfSigned(hosts []string, now time.Time) (certPEM, keyPEM []byte, err erro
 	}
 	tmpl := &x509.Certificate{
 		SerialNumber: serial,
-		Subject:      pkix.Name{CommonName: "cpsync", Organization: []string{"cpsync (self-signed)"}},
+		Subject:      pkix.Name{CommonName: "cbshare", Organization: []string{"cbshare (self-signed)"}},
 		NotBefore:    now.Add(-time.Hour),
 		NotAfter:     now.Add(validity),
 		KeyUsage:     x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,

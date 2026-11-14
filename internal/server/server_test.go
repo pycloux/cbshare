@@ -13,9 +13,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pycloux/cpsync/internal/config"
-	"github.com/pycloux/cpsync/internal/store"
-	"github.com/pycloux/cpsync/internal/tlsutil"
+	"github.com/pycloux/cbshare/internal/config"
+	"github.com/pycloux/cbshare/internal/store"
+	"github.com/pycloux/cbshare/internal/tlsutil"
 )
 
 func newTestStore(t *testing.T) *store.Store {
@@ -71,7 +71,7 @@ func TestServeHTTPS(t *testing.T) {
 	}
 	html, _ := io.ReadAll(resp.Body)
 	resp.Body.Close()
-	if !strings.Contains(string(html), "cpsync") {
+	if !strings.Contains(string(html), "cbshare") {
 		t.Fatal("index page not served")
 	}
 

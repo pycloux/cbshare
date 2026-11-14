@@ -1,14 +1,14 @@
-# cpsync example configuration.
+# cbshare example configuration.
 # Every key is optional; missing keys keep their built-in default.
 # Command-line flags override values from this file.
-# Usage: cpsync --config cpsync.yaml --key <key>
+# Usage: cbshare --config cbshare.yaml --key <key>
 
 # Network
 port: 8443
 # bind: 192.168.1.10      # default: auto-detected primary LAN IP; 0.0.0.0 for all interfaces
 
 # Storage
-database: cpsync.db
+database: cbshare.db
 
 # TLS: leave both empty to use a self-signed certificate
 # tls_cert: /path/to/cert.pem

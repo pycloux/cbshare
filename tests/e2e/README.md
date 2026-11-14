@@ -1,10 +1,10 @@
 # External tests
 
-Black-box tests of the built `cpsync` program, following the test plan case by case (see [#19](https://github.com/pycloux/cpsync/issues/19)); the case IDs, such as `LOCK-01`, are the plan's. They start the real executable and check it only from the outside, as a person would: its command line and console output, its files, its HTTPS API, and real browsers driven by [Playwright](https://playwright.dev/python/). They never import cpsync's Go code; the Go tests (`go test ./...`) cover the code from the inside.
+Black-box tests of the built `cbshare` program, following the test plan case by case (see [#19](https://github.com/pycloux/cbshare/issues/19)); the case IDs, such as `LOCK-01`, are the plan's. They start the real executable and check it only from the outside, as a person would: its command line and console output, its files, its HTTPS API, and real browsers driven by [Playwright](https://playwright.dev/python/). They never import cbshare's Go code; the Go tests (`go test ./...`) cover the code from the inside.
 
 ## Running the tests
 
-You need Python 3.12 or later, Go (to build cpsync) and Linux.
+You need Python 3.12 or later, Go (to build cbshare) and Linux.
 
 ```sh
 cd tests/e2e
@@ -24,9 +24,9 @@ Markers: `p1`, `p2` and `p3` come from `cases.yaml`; `browser` is added to every
 
 From the repository root, `make e2e` runs the P1 cases.
 
-The tests build cpsync from this repository. To test a binary you already have, set `CPSYNC_BIN=/path/to/cpsync`. To use an installed Chromium instead of Playwright's download, set `E2E_CHROMIUM_PATH=/usr/bin/google-chrome`.
+The tests build cbshare from this repository. To test a binary you already have, set `CBSHARE_BIN=/path/to/cbshare`. To use an installed Chromium instead of Playwright's download, set `E2E_CHROMIUM_PATH=/usr/bin/google-chrome`.
 
-Reports: add `--html report.html --self-contained-html` for an HTML report. When a test fails, its screenshots and Playwright traces are kept in `test-results/` (open a trace with `playwright show-trace <file>`), and the console output of every cpsync process it started is attached to the report.
+Reports: add `--html report.html --self-contained-html` for an HTML report. When a test fails, its screenshots and Playwright traces are kept in `test-results/` (open a trace with `playwright show-trace <file>`), and the console output of every cbshare process it started is attached to the report.
 
 ## How it is organised
 
@@ -35,7 +35,7 @@ Reports: add `--html report.html --self-contained-html` for an HTML report. When
 | `cases.yaml` | Every case of the plan: title, priority, and whether it is `automated`, `planned` (not yet), `manual` (with the reason), or covered by the whole `suite`; `manual_part` says what of an automated case is still checked by hand |
 | `test_<group>.py` | The tests of one group of the plan (`test_su.py` for SU-01…SU-13, and so on) |
 | `test_consistency.py` | Checks that `cases.yaml` and the tests agree |
-| `harness.py` | Starting and stopping cpsync, reading its console, the API client, TOTP codes, certificates |
+| `harness.py` | Starting and stopping cbshare, reading its console, the API client, TOTP codes, certificates |
 | `ui.py` | Browser helpers: screens, signing in, sending, finding messages |
 | `conftest.py` | pytest fixtures (servers, browser clients) and the case and priority markers |
 | `tools/summary.py` | Turns `--case-results results.json` into the Markdown table shown in CI |
@@ -49,16 +49,16 @@ def test_lockout_after_5_failures(ready): ...
 
 Its priority marker (`p1`, `p2`, `p3`) is added from `cases.yaml`. Useful fixtures:
 
-- `server`: cpsync just started for the first time (`server.key`, `server.pin`, `server.fingerprint`, `server.output`, `server.wait_for(...)`, `server.restart()`).
+- `server`: cbshare just started for the first time (`server.key`, `server.pin`, `server.fingerprint`, `server.output`, `server.wait_for(...)`, `server.restart()`).
 - `ready`: a server whose setup is done: `ready.url`, `ready.secret` (the admin account's TOTP secret), `ready.accounts` (creates users on demand through the admin API, as the admin would), and `ready.api(source=None)` for an API client, optionally from another loopback address such as `127.0.0.2` (a second machine). `ready.api().login(ready.accounts, "anna")` signs in as anna, creating her first if needed.
 - `make_server`, `make_ready`: the same, with extra command-line flags.
 - `client()`: a new browser profile (its own cookies), like another person; `ui.sign_in(client(), ready.url, ready.accounts, "name")` signs it in.
 
-cpsync accepts each one-time code only once per user. Use `harness.fresh_code(secret)` for a code to sign in with: it picks a time step not used yet, and waits if a test signs the same user in more than twice within 30 seconds. `harness.wrong_code(secret)` gives a code that is not valid.
+cbshare accepts each one-time code only once per user. Use `harness.fresh_code(secret)` for a code to sign in with: it picks a time step not used yet, and waits if a test signs the same user in more than twice within 30 seconds. `harness.wrong_code(secret)` gives a code that is not valid.
 
-The suite builds cpsync with `-tags testhooks`, which lets a test shorten the 24-hour window of a new QR code with the `CPSYNC_TEST_ENROLMENT_WINDOW` environment variable (USR-05). Release builds do not contain this hook. To run the suite against your own binary (`CPSYNC_BIN`), build it with that tag too.
+The suite builds cbshare with `-tags testhooks`, which lets a test shorten the 24-hour window of a new QR code with the `CBSHARE_TEST_ENROLMENT_WINDOW` environment variable (USR-05). Release builds do not contain this hook. To run the suite against your own binary (`CBSHARE_BIN`), build it with that tag too.
 
-Every test starts its own cpsync process, in its own folder and on its own port, so tests never depend on each other and run in parallel.
+Every test starts its own cbshare process, in its own folder and on its own port, so tests never depend on each other and run in parallel.
 
 ## Adding a test for a case
 

@@ -1,4 +1,4 @@
-// Package server implements cpsync's HTTPS server and JSON API.
+// Package server implements cbshare's HTTPS server and JSON API.
 //
 // Files in this package:
 //
@@ -37,11 +37,11 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/pycloux/cpsync/internal/auth"
-	"github.com/pycloux/cpsync/internal/config"
-	"github.com/pycloux/cpsync/internal/crypto"
-	"github.com/pycloux/cpsync/internal/store"
-	"github.com/pycloux/cpsync/web"
+	"github.com/pycloux/cbshare/internal/auth"
+	"github.com/pycloux/cbshare/internal/config"
+	"github.com/pycloux/cbshare/internal/crypto"
+	"github.com/pycloux/cbshare/internal/store"
+	"github.com/pycloux/cbshare/web"
 )
 
 // maxConcurrentHashes is how many admin password checks may run at once.
@@ -49,7 +49,7 @@ import (
 // busy for a fraction of a second; two keep the server responsive.
 const maxConcurrentHashes = 2
 
-// Server is a cpsync HTTPS server. It is safe for concurrent use: the
+// Server is a cbshare HTTPS server. It is safe for concurrent use: the
 // session store, limiter and hub have their own locks, revision is atomic,
 // and the fields below mu are guarded by mu.
 type Server struct {
@@ -285,7 +285,7 @@ func (s *Server) changed() {
 	s.hub.notify()
 }
 
-// systemMessage posts a message from cpsync itself to the chat, such as a
+// systemMessage posts a message from cbshare itself to the chat, such as a
 // failed sign-in alert. It counts toward the retention limit like any
 // other message. Failures are only logged: an alert that cannot be stored
 // must not break the request that triggered it.

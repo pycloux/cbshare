@@ -1,4 +1,4 @@
-// Package store keeps cpsync's data in an encrypted SQLite database.
+// Package store keeps cbshare's data in an encrypted SQLite database.
 //
 // Encryption uses the Adiantum VFS of github.com/ncruces/go-sqlite3: every
 // page of the database and its journals is encrypted with the key, so the
@@ -28,10 +28,10 @@ var (
 	ErrNotFound = errors.New("database not found")
 	// ErrWrongKey is returned by Open when the key does not decrypt the database.
 	ErrWrongKey = errors.New("wrong key: the database cannot be decrypted with it")
-	// ErrOldSchema is returned by Open for a database created by cpsync
+	// ErrOldSchema is returned by Open for a database created by cbshare
 	// v0.2, whose shared authenticator code v0.3 replaced with per-user
 	// codes. There is no migration: the database must be recreated.
-	ErrOldSchema = errors.New("this database was created by cpsync v0.2, which this version cannot use: " +
+	ErrOldSchema = errors.New("this database was created by cbshare v0.2, which this version cannot use: " +
 		"delete it and start again with --password")
 )
 
@@ -42,8 +42,8 @@ const SettingAdminHash = "admin_password_hash"
 
 // schemaVersion is stored in SQLite's user_version pragma.
 //
-//	1  cpsync v0.2: one shared authenticator secret in settings
-//	2  cpsync v0.3: a users table with one secret per user
+//	1  cbshare v0.2: one shared authenticator secret in settings
+//	2  cbshare v0.3: a users table with one secret per user
 //
 // Version 1 databases are refused (ErrOldSchema); see migrate.
 const schemaVersion = 2
@@ -203,7 +203,7 @@ func databaseURI(path string, query url.Values) string {
 }
 
 // migrate creates the schema if needed. It refuses databases created by a
-// newer cpsync, whose schema this version might damage, and those created
+// newer cbshare, whose schema this version might damage, and those created
 // by v0.2 (schema 1), which are not migrated.
 func (s *Store) migrate() error {
 	var v int
@@ -214,7 +214,7 @@ func (s *Store) migrate() error {
 		return ErrOldSchema
 	}
 	if v > schemaVersion {
-		return fmt.Errorf("database schema version %d is newer than this cpsync supports (%d)", v, schemaVersion)
+		return fmt.Errorf("database schema version %d is newer than this cbshare supports (%d)", v, schemaVersion)
 	}
 	if _, err := s.db.Exec(schema); err != nil {
 		return fmt.Errorf("create schema: %w", err)

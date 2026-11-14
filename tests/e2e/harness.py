@@ -1,8 +1,8 @@
 """Building blocks for the external tests.
 
-Everything here talks to cpsync from the outside, the way a person would:
+Everything here talks to cbshare from the outside, the way a person would:
 it starts the executable, reads what it prints, and uses its HTTPS API.
-Nothing imports cpsync's Go code.
+Nothing imports cbshare's Go code.
 """
 
 from __future__ import annotations
@@ -30,7 +30,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 ADMIN_PASSWORD = "Adm1n-Test-42"
 
 # Key printed at first start: groups of 5 base32 characters.
-KEY_RE = re.compile(r"Restart with:\s+cpsync --key (\S+)")
+KEY_RE = re.compile(r"Restart with:\s+cbshare --key (\S+)")
 PIN_RE = re.compile(r"SETUP PIN:\s+(\S+)")
 FINGERPRINT_RE = re.compile(r"Certificate SHA-256 fingerprint:\s+([0-9A-F:]{95})")
 URL_RE = re.compile(r"Open (https://\S+?)/ in a browser")
@@ -48,7 +48,7 @@ def totp_code(secret: str, at: float | None = None) -> str:
     return pyotp.TOTP(secret).at(at if at is not None else time.time())
 
 
-# cpsync accepts each code once: after a sign-in with the code of a 30-second
+# cbshare accepts each code once: after a sign-in with the code of a 30-second
 # step, codes of that step and older ones are refused for that user (replay
 # guard). The server accepts the codes of the previous, current and next
 # steps, so a test can sign the same user in twice in a row without waiting
@@ -86,15 +86,15 @@ class ServerError(AssertionError):
     pass
 
 
-class CpsyncServer:
-    """One cpsync process with its own folder, database and port.
+class CbshareServer:
+    """One cbshare process with its own folder, database and port.
 
     The console output is collected continuously; wait_for() waits for a
     line to appear. Stop it with stop() (Ctrl+C), which the fixtures also
     do at the end of each test.
     """
 
-    def __init__(self, binary: str, workdir: Path, bind: str = "127.0.0.1", db: str = "cpsync.db"):
+    def __init__(self, binary: str, workdir: Path, bind: str = "127.0.0.1", db: str = "cbshare.db"):
         self.binary = binary
         self.workdir = Path(workdir)
         self.workdir.mkdir(parents=True, exist_ok=True)
@@ -128,12 +128,12 @@ class CpsyncServer:
 
     def start(self, *extra: str, password: str | None = None, key: str | None = None,
               env: dict | None = None, wait: bool = True,
-              port: int | None = None, port_flag: bool = True) -> "CpsyncServer":
-        """Starts cpsync and, unless wait is False, waits until it listens.
+              port: int | None = None, port_flag: bool = True) -> "CbshareServer":
+        """Starts cbshare and, unless wait is False, waits until it listens.
 
         port: listen on this port (e.g. the previous one, so that open
         browsers reconnect); otherwise a free port is picked. A picked port
-        can be taken by another test before cpsync binds it; the start is
+        can be taken by another test before cbshare binds it; the start is
         then retried on a new port. port_flag=False leaves --port out (the
         port then comes from a configuration file; pass it as port).
         """
@@ -160,13 +160,13 @@ class CpsyncServer:
         raise ServerError("could not find a free port")
 
     def _wait_accepting(self, timeout: float) -> None:
-        """Waits until our cpsync answers on its port.
+        """Waits until our cbshare answers on its port.
 
-        "listening on" is printed just before cpsync binds the port, and
+        "listening on" is printed just before cbshare binds the port, and
         tests running in parallel can pick the same free port: the other
-        cpsync then fails to bind and exits, but for a moment the port
+        cbshare then fails to bind and exits, but for a moment the port
         answers with the wrong server. So the certificate presented on the
-        port must be the one this process printed (each cpsync generates
+        port must be the one this process printed (each cbshare generates
         its own); otherwise we wait for our process to exit, and start()
         retries on another port.
         """
@@ -179,7 +179,7 @@ class CpsyncServer:
         while time.monotonic() < deadline:
             if self.proc.poll() is not None:
                 time.sleep(0.2)
-                raise ServerError(f"cpsync exited ({self.proc.returncode}):\n{self.output}")
+                raise ServerError(f"cbshare exited ({self.proc.returncode}):\n{self.output}")
             try:
                 der = peer_certificate(host, self.port)
                 if self.fingerprint is None or fingerprint_of(der) == self.fingerprint:
@@ -193,8 +193,8 @@ class CpsyncServer:
         with self._lock:
             self._out = []
         full_env = dict(os.environ)
-        full_env.pop("CPSYNC_PASSWORD", None)
-        full_env.pop("CPSYNC_KEY", None)
+        full_env.pop("CBSHARE_PASSWORD", None)
+        full_env.pop("CBSHARE_KEY", None)
         if env:
             full_env.update(env)
         self.proc = subprocess.Popen(
@@ -234,7 +234,7 @@ class CpsyncServer:
                 m = rx.search(self.output)
                 if m:
                     return m
-                raise ServerError(f"cpsync exited ({self.proc.returncode}) before printing {pattern!r}:\n{self.output}")
+                raise ServerError(f"cbshare exited ({self.proc.returncode}) before printing {pattern!r}:\n{self.output}")
             time.sleep(0.05)
         raise ServerError(f"{pattern!r} not printed within {timeout}s:\n{self.output}")
 
@@ -255,7 +255,7 @@ class CpsyncServer:
         return f"https://{host}:{self.port}"
 
     def stop(self, sig: int = signal.SIGINT, timeout: float = 15) -> int | None:
-        """Stops cpsync like Ctrl+C and returns its exit code."""
+        """Stops cbshare like Ctrl+C and returns its exit code."""
         if not self.proc:
             return None
         if self.proc.poll() is not None:
@@ -269,19 +269,19 @@ class CpsyncServer:
         except subprocess.TimeoutExpired:
             self.proc.kill()
             self.proc.wait()
-            raise ServerError(f"cpsync did not stop within {timeout}s after signal {sig}")
+            raise ServerError(f"cbshare did not stop within {timeout}s after signal {sig}")
 
-    def restart(self, *extra: str, key: str | None = None, same_port: bool = False) -> "CpsyncServer":
-        """Stops cpsync and starts it again with the key printed at first start."""
+    def restart(self, *extra: str, key: str | None = None, same_port: bool = False) -> "CbshareServer":
+        """Stops cbshare and starts it again with the key printed at first start."""
         port = self.port if same_port else None
         self.stop()
         return self.start(*extra, key=key or self.key, port=port)
 
     def run(self, *args: str, env: dict | None = None, timeout: float = 30) -> subprocess.CompletedProcess:
-        """Runs cpsync to completion (for commands that exit by themselves)."""
+        """Runs cbshare to completion (for commands that exit by themselves)."""
         full_env = dict(os.environ)
-        full_env.pop("CPSYNC_PASSWORD", None)
-        full_env.pop("CPSYNC_KEY", None)
+        full_env.pop("CBSHARE_PASSWORD", None)
+        full_env.pop("CBSHARE_KEY", None)
         if env:
             full_env.update(env)
         argv = [self.binary, *args]
@@ -416,7 +416,7 @@ class ApiClient:
 
 
 class Accounts:
-    """The user accounts of one cpsync server, for tests.
+    """The user accounts of one cbshare server, for tests.
 
     secret(name) returns a user's TOTP secret, creating the user through the
     admin API on first use, as the admin would. "admin" is the account made
@@ -477,7 +477,7 @@ def peer_certificate(host: str, port: int) -> bytes:
 
 
 def fingerprint_of(der: bytes) -> str:
-    """SHA-256 fingerprint formatted like cpsync's console and browsers."""
+    """SHA-256 fingerprint formatted like cbshare's console and browsers."""
     return ":".join(f"{b:02X}" for b in hashlib.sha256(der).digest())
 
 
@@ -485,7 +485,7 @@ def fingerprint_of(der: bytes) -> str:
 
 
 class CuttableProxy:
-    """A TCP proxy in front of cpsync that can cut the network: cut()
+    """A TCP proxy in front of cbshare that can cut the network: cut()
     drops every open connection and refuses new ones, restore() lets
     connections through again. Browsers that use it see a real network
     outage, while the server keeps running."""

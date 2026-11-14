@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pycloux/cpsync/internal/config"
+	"github.com/pycloux/cbshare/internal/config"
 )
 
 type sseEvent struct{ name, data string }

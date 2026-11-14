@@ -16,8 +16,8 @@ func TestDatabaseURI(t *testing.T) {
 	q := url.Values{"vfs": {"adiantum"}}
 	cases := map[string]string{
 		// No "///" before the drive letter: Windows rejects "/C:/...".
-		"C:/Users/runner/sub dir #1/cpsync.db": "file:C:/Users/runner/sub dir %231/cpsync.db?vfs=adiantum",
-		"/home/a/100% ok?.db":                  "file:/home/a/100%25 ok%3F.db?vfs=adiantum",
+		"C:/Users/runner/sub dir #1/cbshare.db": "file:C:/Users/runner/sub dir %231/cbshare.db?vfs=adiantum",
+		"/home/a/100% ok?.db":                   "file:/home/a/100%25 ok%3F.db?vfs=adiantum",
 	}
 	for path, want := range cases {
 		if got := databaseURI(path, q); got != want {
@@ -28,7 +28,7 @@ func TestDatabaseURI(t *testing.T) {
 
 func TestCreateReopenAndEncryption(t *testing.T) {
 	ctx := context.Background()
-	path := filepath.Join(t.TempDir(), "sub dir #1", "cpsync.db")
+	path := filepath.Join(t.TempDir(), "sub dir #1", "cbshare.db")
 
 	s, err := Create(path, testKey(1))
 	if err != nil {

@@ -1,6 +1,6 @@
 name: External tests
 
-# Black-box tests of the built cpsync program (tests/e2e), following the
+# Black-box tests of the built cbshare program (tests/e2e), following the
 # manual test plan (see #19):
 #   - pull requests and main: the P1 cases in Chromium;
 #   - scope "full" (releases, or run by hand): every automated case in
@@ -59,11 +59,11 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - name: Build cpsync
+      - name: Build cbshare
         working-directory: .
         env:
           CGO_ENABLED: "0"
-        run: go build -trimpath -tags testhooks -o "$RUNNER_TEMP/cpsync" ./cmd/cpsync
+        run: go build -trimpath -tags testhooks -o "$RUNNER_TEMP/cbshare" ./cmd/cbshare
 
       - uses: actions/setup-python@v7
         with:
@@ -78,7 +78,7 @@ jobs:
 
       - name: Run the tests
         env:
-          CPSYNC_BIN: ${{ runner.temp }}/cpsync
+          CBSHARE_BIN: ${{ runner.temp }}/cbshare
         run: >
           pytest -m "${{ matrix.markers }}" -n auto --browser ${{ matrix.browser }}
           --case-results results.json

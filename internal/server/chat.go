@@ -21,7 +21,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/pycloux/cpsync/internal/store"
+	"github.com/pycloux/cbshare/internal/store"
 )
 
 const (

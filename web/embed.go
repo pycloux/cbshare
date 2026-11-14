@@ -1,4 +1,4 @@
-// Package web embeds cpsync's browser front end into the executable.
+// Package web embeds cbshare's browser front end into the executable.
 package web
 
 import (

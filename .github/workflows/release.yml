@@ -48,13 +48,13 @@ jobs:
           mkdir -p dist
           for target in linux/amd64 linux/arm64 windows/amd64 windows/arm64; do
             os=${target%/*}; arch=${target#*/}
-            name="cpsync-${VERSION}-${os}-${arch}"
+            name="cbshare-${VERSION}-${os}-${arch}"
             ext=""; [ "$os" = windows ] && ext=".exe"
             mkdir -p "build/${name}"
             CGO_ENABLED=0 GOOS=$os GOARCH=$arch go build -trimpath \
               -ldflags "-s -w -X main.version=${VERSION}" \
-              -o "build/${name}/cpsync${ext}" ./cmd/cpsync
-            cp README.md cpsync.example.yaml "build/${name}/"
+              -o "build/${name}/cbshare${ext}" ./cmd/cbshare
+            cp README.md cbshare.example.yaml "build/${name}/"
             [ -f LICENSE ] && cp LICENSE "build/${name}/"
             if [ "$os" = windows ]; then
               (cd build && zip -qr "../dist/${name}.zip" "${name}")
@@ -66,4 +66,4 @@ jobs:
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${{ github.ref_name }}" dist/* --title "cpsync ${{ github.ref_name }}" --generate-notes
+        run: gh release create "${{ github.ref_name }}" dist/* --title "cbshare ${{ github.ref_name }}" --generate-notes

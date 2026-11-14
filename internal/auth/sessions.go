@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pycloux/cpsync/internal/crypto"
+	"github.com/pycloux/cbshare/internal/crypto"
 )
 
 // User identifies the account a session belongs to.

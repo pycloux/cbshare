@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pycloux/cpsync/internal/config"
+	"github.com/pycloux/cbshare/internal/config"
 )
 
 func (c *client) upload(name string, data []byte, caption string) result {

@@ -12,8 +12,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pycloux/cpsync/internal/crypto"
-	"github.com/pycloux/cpsync/internal/store"
+	"github.com/pycloux/cbshare/internal/crypto"
+	"github.com/pycloux/cbshare/internal/store"
 )
 
 // TestBinaryInterruptedFirstStart presses Ctrl+C (SIGINT) at different
@@ -25,20 +25,20 @@ func TestBinaryInterruptedFirstStart(t *testing.T) {
 		t.Skip("builds and runs the binary")
 	}
 	dir := t.TempDir()
-	bin := filepath.Join(dir, "cpsync")
+	bin := filepath.Join(dir, "cbshare")
 	build := exec.Command("go", "build", "-o", bin, ".")
 	build.Env = append(os.Environ(), "CGO_ENABLED=0")
 	if out, err := build.CombinedOutput(); err != nil {
 		t.Fatalf("build: %v\n%s", err, out)
 	}
-	keyRe := regexp.MustCompile(`cpsync --key (\S+)`)
+	keyRe := regexp.MustCompile(`cbshare --key (\S+)`)
 
 	// Interrupt as soon as the file appears (inside first start), and
 	// after short delays (around the key and later).
 	delays := []time.Duration{0, 0, 5 * time.Millisecond, 50 * time.Millisecond, 200 * time.Millisecond, time.Second, 3 * time.Second}
 	incomplete := 0
 	for i, delay := range delays {
-		db := filepath.Join(t.TempDir(), "cpsync.db")
+		db := filepath.Join(t.TempDir(), "cbshare.db")
 		cmd := exec.Command(bin, "--password", "pw", "--db", db,
 			"--bind", "127.0.0.1", "--port", strconv.Itoa(freePort(t)))
 		var out bytes.Buffer
@@ -55,7 +55,7 @@ func TestBinaryInterruptedFirstStart(t *testing.T) {
 		for {
 			select {
 			case err := <-done:
-				t.Fatalf("run %d: cpsync exited before Ctrl+C (%v):\n%s", i, err, out.String())
+				t.Fatalf("run %d: cbshare exited before Ctrl+C (%v):\n%s", i, err, out.String())
 			case <-deadline:
 				cmd.Process.Kill()
 				t.Fatalf("run %d: the database file never appeared:\n%s", i, out.String())
@@ -72,7 +72,7 @@ func TestBinaryInterruptedFirstStart(t *testing.T) {
 		case <-done:
 		case <-time.After(20 * time.Second):
 			cmd.Process.Kill()
-			t.Fatalf("run %d: cpsync did not stop after Ctrl+C:\n%s", i, out.String())
+			t.Fatalf("run %d: cbshare did not stop after Ctrl+C:\n%s", i, out.String())
 		}
 
 		m := keyRe.FindStringSubmatch(out.String())

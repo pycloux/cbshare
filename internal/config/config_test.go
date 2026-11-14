@@ -24,7 +24,7 @@ func TestDefaultsAreValid(t *testing.T) {
 
 func writeFile(t *testing.T, content string) string {
 	t.Helper()
-	p := filepath.Join(t.TempDir(), "cpsync.yaml")
+	p := filepath.Join(t.TempDir(), "cbshare.yaml")
 	if err := os.WriteFile(p, []byte(content), 0o600); err != nil {
 		t.Fatal(err)
 	}

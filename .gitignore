@@ -1,5 +1,5 @@
-/cpsync
-/cpsync.exe
+/cbshare
+/cbshare.exe
 /dist/
 /site/
 *.db

@@ -23,7 +23,7 @@ def test_self_signed_certificate_and_fingerprint(server, client):
     assert fingerprint_of(der) == server.fingerprint, "certificate differs from the console fingerprint"
 
     cert = x509.load_der_x509_certificate(der)
-    assert cert.subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value == "cpsync"
+    assert cert.subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value == "cbshare"
     ips = cert.extensions.get_extension_for_class(x509.SubjectAlternativeName).value.get_values_for_type(x509.IPAddress)
     assert ipaddress.ip_address("127.0.0.1") in ips
 
@@ -48,7 +48,7 @@ def make_ca_and_cert(folder, ip="127.0.0.1"):
 
     now = datetime.datetime.now(datetime.timezone.utc)
     ca_key = key()
-    ca_name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "cpsync test CA")])
+    ca_name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "cbshare test CA")])
     ca = (x509.CertificateBuilder().subject_name(ca_name).issuer_name(ca_name)
           .public_key(ca_key.public_key()).serial_number(x509.random_serial_number())
           .not_valid_before(now - datetime.timedelta(hours=1)).not_valid_after(now + datetime.timedelta(days=30))
@@ -60,7 +60,7 @@ def make_ca_and_cert(folder, ip="127.0.0.1"):
           .sign(ca_key, hashes.SHA256()))
     srv_key = key()
     cert = (x509.CertificateBuilder()
-            .subject_name(x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "cpsync.lan")]))
+            .subject_name(x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "cbshare.lan")]))
             .issuer_name(ca_name).public_key(srv_key.public_key()).serial_number(x509.random_serial_number())
             .not_valid_before(now - datetime.timedelta(hours=1)).not_valid_after(now + datetime.timedelta(days=30))
             .add_extension(x509.SubjectAlternativeName([x509.IPAddress(ipaddress.ip_address(ip))]), critical=False)
@@ -88,7 +88,7 @@ def test_plain_http_is_not_served(ready):
     r = get(f"http://127.0.0.1:{ready.server.port}/api/state")
     assert r.status_code == 400
     assert "HTTP request to an HTTPS server" in r.text
-    assert "csrf" not in r.text and "cpsync" not in r.text.lower()
+    assert "csrf" not in r.text and "cbshare" not in r.text.lower()
 
 
 @pytest.mark.case("NET-04")

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pycloux/cpsync/internal/crypto"
-	"github.com/pycloux/cpsync/internal/store"
+	"github.com/pycloux/cbshare/internal/crypto"
+	"github.com/pycloux/cbshare/internal/store"
 )
 
 // newAdminHarness stores an admin password as the first start does.

@@ -16,23 +16,23 @@ Admin rights end when you choose **Admin tools → Lock admin**, sign out, or yo
 
 ## Managing users
 
-Each person who uses cpsync has their own account and QR code. Open **Admin tools → Manage users** to see them all, with their status, last sign-in and open sessions.
+Each person who uses cbshare has their own account and QR code. Open **Admin tools → Manage users** to see them all, with their status, last sign-in and open sessions.
 
 ![Users](images/admin-users.png){ width="640" }
 
-cpsync allows 10 accounts by default, the admin included; change it with [`max_users`](configuration.md#users). Usernames are up to 32 characters, unique whatever their letter case (`Anna` and `anna` are the same name), and `admin` and `cpsync` are reserved. A username cannot be changed: to rename someone, delete the account and add a new one.
+cbshare allows 10 accounts by default, the admin included; change it with [`max_users`](configuration.md#users). Usernames are up to 32 characters, unique whatever their letter case (`Anna` and `anna` are the same name), and `admin` and `cbshare` are reserved. A username cannot be changed: to rename someone, delete the account and add a new one.
 
 ### Add a user
 
 1. Type the person's name under **New user's name** and choose **Add user**.
 2. Their QR code appears, with the deadline for their first sign-in.
-3. Send the QR code to the person **through a private channel**: show it to them in person, or send a screenshot through an encrypted messenger. Never post it in the cpsync chat, where everyone would see it.
+3. Send the QR code to the person **through a private channel**: show it to them in person, or send a screenshot through an encrypted messenger. Never post it in the cbshare chat, where everyone would see it.
 4. Choose **Done**.
 
 ![A new user's QR code](images/admin-new-user-qr.png){ width="640" }
 
 !!! warning "The QR code is shown only once"
-    When you close the dialog, the code is gone: cpsync never shows it again. If it was lost, give the user a new QR code.
+    When you close the dialog, the code is gone: cbshare never shows it again. If it was lost, give the user a new QR code.
 
 The person adds the code to their authenticator app, then signs in with their username and the current code. Until then, the list shows them as *Waiting for first sign-in*. If they don't sign in within **24 hours**, the code expires (*QR code expired*): give them a new one.
 
@@ -73,38 +73,38 @@ From that moment the old code no longer works and your sessions end, on every ma
 
 If you change your mind, choose **Keep the current code** or close the dialog: the new code is discarded.
 
-## Running cpsync as a service
+## Running cbshare as a service
 
 === "Linux (systemd)"
 
-    Create `/etc/cpsync/env` with the key, readable only by root:
+    Create `/etc/cbshare/env` with the key, readable only by root:
 
     ```sh
-    CPSYNC_KEY=GTR74-AKCYX-...
+    CBSHARE_KEY=GTR74-AKCYX-...
     ```
 
-    Then `/etc/systemd/system/cpsync.service`:
+    Then `/etc/systemd/system/cbshare.service`:
 
     ```ini
     [Unit]
-    Description=cpsync
+    Description=cbshare
     After=network-online.target
     Wants=network-online.target
 
     [Service]
-    EnvironmentFile=/etc/cpsync/env
-    ExecStart=/usr/local/bin/cpsync --db /var/lib/cpsync/cpsync.db --config /etc/cpsync/cpsync.yaml
+    EnvironmentFile=/etc/cbshare/env
+    ExecStart=/usr/local/bin/cbshare --db /var/lib/cbshare/cbshare.db --config /etc/cbshare/cbshare.yaml
     DynamicUser=yes
-    StateDirectory=cpsync
+    StateDirectory=cbshare
     Restart=on-failure
 
     [Install]
     WantedBy=multi-user.target
     ```
 
-    Start it with `sudo systemctl enable --now cpsync`, and read its output with `journalctl -u cpsync -f`.
+    Start it with `sudo systemctl enable --now cbshare`, and read its output with `journalctl -u cbshare -f`.
 
-    Do the first start (with `--password`) by hand, then move the database to `/var/lib/cpsync/`.
+    Do the first start (with `--password`) by hand, then move the database to `/var/lib/cbshare/`.
 
 === "Windows"
 
@@ -112,9 +112,9 @@ If you change your mind, choose **Keep the current code** or close the dialog: t
 
     1. Open **Task Scheduler** and choose **Create Task**.
     2. On **Triggers**, add **At startup**.
-    3. On **Actions**, start `C:\Tools\cpsync\cpsync.exe` with the arguments `--db C:\Tools\cpsync\cpsync.db` and start in `C:\Tools\cpsync`.
-    4. Set the `CPSYNC_KEY` environment variable for the account that runs the task, rather than putting the key in the arguments.
+    3. On **Actions**, start `C:\Tools\cbshare\cbshare.exe` with the arguments `--db C:\Tools\cbshare\cbshare.db` and start in `C:\Tools\cbshare`.
+    4. Set the `CBSHARE_KEY` environment variable for the account that runs the task, rather than putting the key in the arguments.
 
 ## Logs
 
-cpsync writes its log to the console: sign-ins (with the username), failed attempts, admin actions, user changes (added, new QR code, revoked, deleted, expired), messages posted (by number and size), file names shared, and session expiries. Message texts and file contents are never logged. There is no log file; redirect the output if you want to keep it.
+cbshare writes its log to the console: sign-ins (with the username), failed attempts, admin actions, user changes (added, new QR code, revoked, deleted, expired), messages posted (by number and size), file names shared, and session expiries. Message texts and file contents are never logged. There is no log file; redirect the output if you want to keep it.

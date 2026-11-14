@@ -102,12 +102,12 @@ def test_admin_endpoints_require_admin_rights(ready):
 @pytest.mark.case("SEC-08")
 def test_session_cookie_protection(ready, client):
     page = sign_in(client(), ready.url, ready.accounts, "Anna laptop")
-    cookie = next(c for c in page.context.cookies() if c["name"] == "cpsync_session")
+    cookie = next(c for c in page.context.cookies() if c["name"] == "cbshare_session")
     assert cookie["httpOnly"] is True
     assert cookie["secure"] is True
     assert cookie["sameSite"] == "Strict"
     assert cookie["expires"] == -1, "ends with the browser session"
-    assert "cpsync_session" not in page.evaluate("document.cookie")
+    assert "cbshare_session" not in page.evaluate("document.cookie")
 
 
 @pytest.mark.case("SEC-07")
@@ -126,14 +126,14 @@ def test_the_page_cannot_be_framed(ready, client, browser_name):
         pytest.skip("Playwright's Firefox stops responding once a frame is refused; "
                     "the X-Frame-Options and CSP headers are checked in SEC-01")
     page = client()
-    # A page on another site that tries to show cpsync in a frame.
+    # A page on another site that tries to show cbshare in a frame.
     page.route("https://framer.test/", lambda route: route.fulfill(
         content_type="text/html",
         body=f'<iframe id="f" src="{ready.url}/" width="600" height="400"></iframe>'))
     page.goto("https://framer.test/", wait_until="domcontentloaded")  # a refused frame may never "load"
     expect(page.locator("#f")).to_be_attached()
     page.wait_for_timeout(2000)
-    # The browser refuses to show cpsync in the frame: none of its screens
+    # The browser refuses to show cbshare in the frame: none of its screens
     # are there. (The frame's error page is not inspected: some engines
     # never answer scripts sent to it.)
     expect(page.frame_locator("#f").locator("#screen-login, #screen-setup-pin, #compose")).to_have_count(0)

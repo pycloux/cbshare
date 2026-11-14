@@ -64,7 +64,7 @@ def test_alerts_reach_everyone_and_the_console(ready, client):
         alert = page.locator(SYSTEM_MESSAGES, has_text="127.0.0.3")
         expect(alert).to_have_count(1)
         expect(alert).to_contain_text("Failed sign-in attempt from 127.0.0.3: wrong username or code.")
-        expect(alert.locator(".msg-author")).to_have_text("cpsync")
+        expect(alert.locator(".msg-author")).to_have_text("cbshare")
         expect(alert.locator("button")).to_have_count(0)  # no Copy, Edit or Delete for normal users
     ready.server.wait_for(r"\[auth\] failed username or code from 127\.0\.0\.3 \(locked=false\)")
 

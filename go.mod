@@ -1,4 +1,4 @@
-module github.com/pycloux/cpsync
+module github.com/pycloux/cbshare
 
 go 1.26.0
 

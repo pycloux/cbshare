@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pycloux/cpsync/internal/config"
-	"github.com/pycloux/cpsync/internal/store"
+	"github.com/pycloux/cbshare/internal/config"
+	"github.com/pycloux/cbshare/internal/store"
 )
 
 func TestSetupFlow(t *testing.T) {

@@ -6,7 +6,7 @@ Each test case of the manual test plan is a test marked with its ID:
     def test_lockout_after_5_failures(ready): ...
 
 The priority (p1, p2, p3) is added from cases.yaml, so `pytest -m p1`
-runs the P1 cases. Every test gets its own cpsync process, folder and
+runs the P1 cases. Every test gets its own cbshare process, folder and
 port, so tests are independent and can run in parallel (pytest -n auto).
 """
 
@@ -22,7 +22,7 @@ from types import SimpleNamespace
 import pytest
 import yaml
 
-from harness import ADMIN_PASSWORD, Accounts, ApiClient, CpsyncServer
+from harness import ADMIN_PASSWORD, Accounts, ApiClient, CbshareServer
 
 HERE = Path(__file__).parent
 REPO = HERE.parent.parent
@@ -96,18 +96,18 @@ def pytest_sessionfinish(session):
         Path(path).write_text(json.dumps(sorted(_results.values(), key=lambda r: r["nodeid"]), indent=1))
 
 
-# ---------- the cpsync binary ----------
+# ---------- the cbshare binary ----------
 
 
 @pytest.fixture(scope="session")
-def cpsync_bin(tmp_path_factory) -> str:
-    """The executable under test: $CPSYNC_BIN, or built from this repository."""
-    path = os.environ.get("CPSYNC_BIN")
+def cbshare_bin(tmp_path_factory) -> str:
+    """The executable under test: $CBSHARE_BIN, or built from this repository."""
+    path = os.environ.get("CBSHARE_BIN")
     if path:
         return str(Path(path).resolve())
-    out = tmp_path_factory.mktemp("bin") / "cpsync"
+    out = tmp_path_factory.mktemp("bin") / "cbshare"
     # testhooks: lets tests shorten the 24-hour enrolment window (USR-05).
-    subprocess.run(["go", "build", "-tags", "testhooks", "-o", str(out), "./cmd/cpsync"], cwd=REPO, check=True,
+    subprocess.run(["go", "build", "-tags", "testhooks", "-o", str(out), "./cmd/cbshare"], cwd=REPO, check=True,
                    env={**os.environ, "CGO_ENABLED": "0"})
     return str(out)
 
@@ -116,14 +116,14 @@ _consoles = pytest.StashKey[list]()
 
 
 @pytest.fixture
-def make_server(cpsync_bin, tmp_path, request):
-    """Factory for cpsync processes; all are stopped after the test, and
+def make_server(cbshare_bin, tmp_path, request):
+    """Factory for cbshare processes; all are stopped after the test, and
     their console output is attached to the report of a failed test."""
-    servers: list[CpsyncServer] = []
+    servers: list[CbshareServer] = []
     request.node.stash[_consoles] = servers
 
-    def make(name: str = "server", **kw) -> CpsyncServer:
-        srv = CpsyncServer(cpsync_bin, tmp_path / name, **kw)
+    def make(name: str = "server", **kw) -> CbshareServer:
+        srv = CbshareServer(cbshare_bin, tmp_path / name, **kw)
         servers.append(srv)
         return srv
 
@@ -142,16 +142,16 @@ def pytest_runtest_makereport(item, call):
     if report.failed and report.when in ("setup", "call"):
         for i, srv in enumerate(item.stash.get(_consoles, [])):
             if srv.history:
-                report.sections.append((f"cpsync console {i + 1}", "\n".join(srv.history)))
+                report.sections.append((f"cbshare console {i + 1}", "\n".join(srv.history)))
 
 
 @pytest.fixture
-def server(make_server) -> CpsyncServer:
-    """A cpsync started for the first time (setup not done yet)."""
+def server(make_server) -> CbshareServer:
+    """A cbshare started for the first time (setup not done yet)."""
     return make_server().start(password=ADMIN_PASSWORD)
 
 
-def _ready(srv: CpsyncServer) -> SimpleNamespace:
+def _ready(srv: CbshareServer) -> SimpleNamespace:
     secret = ApiClient(srv.base_url).setup(srv.pin)
     return SimpleNamespace(server=srv, secret=secret, url=srv.base_url,
                            accounts=Accounts(lambda: srv.base_url, secret),
@@ -160,7 +160,7 @@ def _ready(srv: CpsyncServer) -> SimpleNamespace:
 
 @pytest.fixture
 def ready(server) -> SimpleNamespace:
-    """A cpsync whose first-time setup is done: .server, .url, .api(),
+    """A cbshare whose first-time setup is done: .server, .url, .api(),
     .secret (the admin account's TOTP secret) and .accounts, which creates
     users on demand: ready.api().login(ready.accounts, "anna")."""
     return _ready(server)
@@ -181,7 +181,7 @@ def make_ready(make_server):
 def browser_context_args(browser_context_args):
     return {
         **browser_context_args,
-        "ignore_https_errors": True,  # cpsync's self-signed certificate
+        "ignore_https_errors": True,  # cbshare's self-signed certificate
         "bypass_csp": True,           # lets tests evaluate scripts; CSP itself is tested in SEC cases
         "viewport": {"width": 1100, "height": 760},
     }

@@ -15,7 +15,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pycloux/cpsync/internal/config"
+	"github.com/pycloux/cbshare/internal/config"
 )
 
 // hub notifies event-stream subscribers that the chat changed. Each open

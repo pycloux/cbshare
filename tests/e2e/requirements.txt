@@ -1,4 +1,4 @@
-# External test suite for cpsync (see tests/e2e/README.md).
+# External test suite for cbshare (see tests/e2e/README.md).
 # Versions are pinned so that runs are reproducible.
 pytest==9.2.0
 pytest-playwright==0.10.0

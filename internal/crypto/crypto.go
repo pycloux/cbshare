@@ -1,5 +1,5 @@
 // Package crypto provides key derivation, key encoding, password hashing and
-// random PIN generation for cpsync.
+// random PIN generation for cbshare.
 //
 // Every random value comes from crypto/rand, and every secret comparison
 // is constant-time, so that response timing reveals nothing about how close

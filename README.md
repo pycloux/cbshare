@@ -1,6 +1,6 @@
-# cpsync
+# cbshare
 
-Share text snippets and small files between the machines on your local network. One machine runs `cpsync`; everyone else opens it in a browser and sees the same group chat. Paste a command, a config file or a password on one computer, copy it on another.
+Share text snippets and small files between the machines on your local network. One machine runs `cbshare`; everyone else opens it in a browser and sees the same group chat. Paste a command, a config file or a password on one computer, copy it on another.
 
 - **One executable** for Windows and Linux, no installation, no internet access needed.
 - **Encrypted everywhere**: HTTPS on the wire, an encrypted SQLite database on disk.
@@ -8,14 +8,14 @@ Share text snippets and small files between the machines on your local network. 
 - **Group chat**: text kept exactly as typed with a copy button, file attachments up to 20 MB, edit and delete your own messages, live updates.
 - **Small footprint**: only the latest 20 messages are kept; older ones and their files are deleted.
 
-Full documentation: [docs/](docs/index.md), published at https://pycloux.github.io/cpsync/ when GitHub Pages is enabled.
+Full documentation: [docs/](docs/index.md), published at https://pycloux.github.io/cbshare/ when GitHub Pages is enabled.
 
 ## Quick start
 
-Download the archive for your platform from the [releases](https://github.com/pycloux/cpsync/releases) page, extract it, and start the server with an admin password:
+Download the archive for your platform from the [releases](https://github.com/pycloux/cbshare/releases) page, extract it, and start the server with an admin password:
 
 ```sh
-cpsync --password "choose-an-admin-password"
+cbshare --password "choose-an-admin-password"
 ```
 
 The console prints three things:
@@ -24,7 +24,7 @@ The console prints three things:
 2. **The address** to open, such as `https://192.168.1.10:8443/`.
 3. **A setup PIN.**
 
-Open the address in a browser. It warns about the certificate the first time, because cpsync uses a self-signed one; accept it (compare the fingerprint printed in the console if you want to be sure). Then:
+Open the address in a browser. It warns about the certificate the first time, because cbshare uses a self-signed one; accept it (compare the fingerprint printed in the console if you want to be sure). Then:
 
 1. Enter the setup PIN. The QR code of the **admin** account appears: it is yours, don't share it.
 2. Scan it with an authenticator app (Google Authenticator, Microsoft Authenticator, 2FAS, Aegis, …) and choose **I've added it, continue**.
@@ -34,7 +34,7 @@ Open the address in a browser. It warns about the certificate the first time, be
 To restart the server later, use the key instead of the password:
 
 ```sh
-cpsync --key ABCDE-FGHIJ-...
+cbshare --key ABCDE-FGHIJ-...
 ```
 
 Everyone's authenticator entry keeps working after a restart.
@@ -61,7 +61,7 @@ Sign in as `admin`, choose **Admin** and enter the admin password from the first
 
 ## Configuration
 
-Every setting has a default and can be changed with a flag or a YAML file (`--config cpsync.yaml`, see [cpsync.example.yaml](cpsync.example.yaml)). Flags override the file.
+Every setting has a default and can be changed with a flag or a YAML file (`--config cbshare.yaml`, see [cbshare.example.yaml](cbshare.example.yaml)). Flags override the file.
 
 | Flag | YAML key | Default | Meaning |
 | --- | --- | --- | --- |
@@ -70,7 +70,7 @@ Every setting has a default and can be changed with a flag or a YAML file (`--co
 | `--config` | | | YAML configuration file |
 | `--port` | `port` | `8443` | HTTPS port |
 | `--bind` | `bind` | primary LAN IP | Address to listen on; `0.0.0.0` for all interfaces |
-| `--db` | `database` | `cpsync.db` | Encrypted database file |
+| `--db` | `database` | `cbshare.db` | Encrypted database file |
 | `--tls-cert`, `--tls-key` | `tls_cert`, `tls_key` | self-signed | Your own certificate and key (PEM) |
 | `--max-messages` | `max_messages` | `20` | Messages kept, system messages included |
 | `--max-file-size` | `max_file_size_mb` | `20` | Maximum file size in MB |
@@ -82,7 +82,7 @@ Every setting has a default and can be changed with a flag or a YAML file (`--co
 | `--session-timeout` | `session_timeout` | `30m` | Sign-out after inactivity |
 | `--pin-length` | `pin_length` | `6` | Length of the setup PIN |
 
-`CPSYNC_PASSWORD` and `CPSYNC_KEY` can be used instead of `--password` and `--key` to keep them out of your shell history and process list.
+`CBSHARE_PASSWORD` and `CBSHARE_KEY` can be used instead of `--password` and `--key` to keep them out of your shell history and process list.
 
 ## Security model
 
@@ -91,7 +91,7 @@ Every setting has a default and can be changed with a flag or a YAML file (`--co
 - The admin password is stored only as an Argon2id hash.
 - Every user has their own authenticator secret, so a code proves who someone is; messages belong to the account that posted them. Each code is accepted once, and unknown names and wrong codes get the same answer. Revoking, replacing or deleting an account takes effect at once.
 - Sessions live only in the server's memory and in a browser-session cookie (`Secure`, `HttpOnly`, `SameSite=Strict`).
-- State-changing requests need a per-session anti-CSRF token and must come from the cpsync page itself. A strict Content Security Policy blocks inline and third-party scripts.
+- State-changing requests need a per-session anti-CSRF token and must come from the cbshare page itself. A strict Content Security Policy blocks inline and third-party scripts.
 - Shared files are always served as downloads, never displayed in the page.
 
 If the key is lost, the database cannot be decrypted: delete the file and start again with `--password`.
@@ -101,7 +101,7 @@ If the key is lost, the database cannot be decrypted: delete the file and start 
 Requires Go 1.24 or later.
 
 ```sh
-make build        # ./cpsync
+make build        # ./cbshare
 make test         # Go tests: unit, integration and end-to-end
 make e2e          # external tests: the P1 cases of the test plan (see tests/e2e)
 make cross        # Linux and Windows binaries in dist/
@@ -117,12 +117,12 @@ This section is for developers: where each feature lives, and how a request trav
 
 ### Overview
 
-cpsync is one Go program. It serves a small single-page web application (plain HTML, CSS and JavaScript, embedded in the executable) and a JSON API, over HTTPS. Everything persistent is in one encrypted SQLite file; everything about who is signed in is kept in memory.
+cbshare is one Go program. It serves a small single-page web application (plain HTML, CSS and JavaScript, embedded in the executable) and a JSON API, over HTTPS. Everything persistent is in one encrypted SQLite file; everything about who is signed in is kept in memory.
 
 ```mermaid
 flowchart LR
     B["Browser<br/>runs index.html, app.js, style.css<br/>served from web/static"]
-    subgraph cpsync["cpsync executable"]
+    subgraph cbshare["cbshare executable"]
         direction LR
         M["Middleware<br/>security headers, same origin"] --> R["Routes + session checks<br/>withSession / withUser / withAdmin"]
         R --> H["Handlers<br/>auth, chat, events, admin"]
@@ -131,13 +131,13 @@ flowchart LR
         H --> E["hub<br/>wakes event streams"]
     end
     B -- "HTTPS: JSON API, Server-Sent Events" --> M
-    S --> F[("cpsync.db<br/>settings, messages, files")]
+    S --> F[("cbshare.db<br/>settings, messages, files")]
 ```
 
 ### Repository layout
 
 ```text
-cmd/cpsync/          entry point: startup sequence, console output
+cmd/cbshare/          entry point: startup sequence, console output
   main.go              parse config, open or create the database, load TLS, serve
   main_test.go         end-to-end test of the built binary
 internal/
@@ -161,11 +161,11 @@ docs/                user documentation (MkDocs site)
 .github/workflows/   CI (tests, builds), release, documentation site
 ```
 
-Dependencies only go "downwards": `server` uses `auth`, `store`, `crypto`, `config` and `web`; `auth` uses `crypto` for random tokens; `config`, `crypto`, `store` and `tlsutil` depend on no other cpsync package. Only `server` knows about HTTP. `cmd/cpsync` assembles everything (and passes the store to `tlsutil` to keep the certificate).
+Dependencies only go "downwards": `server` uses `auth`, `store`, `crypto`, `config` and `web`; `auth` uses `crypto` for random tokens; `config`, `crypto`, `store` and `tlsutil` depend on no other cbshare package. Only `server` knows about HTTP. `cmd/cbshare` assembles everything (and passes the store to `tlsutil` to keep the certificate).
 
 ### Startup sequence
 
-`run()` in [cmd/cpsync/main.go](cmd/cpsync/main.go):
+`run()` in [cmd/cbshare/main.go](cmd/cbshare/main.go):
 
 1. **Configuration.** `config.Parse` starts from `config.Default()`, applies the YAML file given with `--config`, then only the flags actually typed. The bind address is auto-detected if not set.
 2. **Database.**
@@ -197,7 +197,7 @@ sequenceDiagram
     participant Op as Operator console
     participant B as Browser
     participant S as Server
-    Op->>S: cpsync --password …
+    Op->>S: cbshare --password …
     S-->>Op: database key + setup PIN
     Note over B,S: First-time setup (once)
     B->>S: POST /api/setup/pin {pin}
@@ -289,7 +289,7 @@ All endpoints return JSON. "Session" means a valid session cookie; state-changin
 | --- | --- |
 | `internal/*/..._test.go` | Unit tests of each package (key format, lockout rules, retention, certificates, …) |
 | `internal/server/*_test.go` | API tests against a real server with real cookies; helpers in [harness_test.go](internal/server/harness_test.go) |
-| `cmd/cpsync/main_test.go` | Builds the binary and runs first start, setup, sign-in, restart with the key |
+| `cmd/cbshare/main_test.go` | Builds the binary and runs first start, setup, sign-in, restart with the key |
 | [`tests/e2e`](tests/e2e) | External tests in Python (pytest + Playwright): the test plan's cases against the built program and real browsers, named by case ID |
 
 Run the Go tests with `make test` (race detector included) or `go test ./...`; CI runs them on Linux and Windows. The external tests are described in [tests/e2e/README.md](tests/e2e/README.md); CI runs their P1 cases on every pull request, and every release runs them all. The few cases that need a person (real phones, Windows, arm64) are in the manual test plan linked under [Building from source](#building-from-source).
@@ -299,3 +299,7 @@ Run the Go tests with `make test` (race detector included) or `go test ./...`; C
 - **New setting:** follow the checklist at the top of [internal/config/config.go](internal/config/config.go).
 - **New endpoint:** add the handler to the matching file in `internal/server`, register it in `routes()` in [server.go](internal/server/server.go) with the right access wrapper, call `s.changed()` if it modifies the chat, and add a test.
 - **New screen or button:** add the markup to `index.html`, the behaviour to the matching section of `app.js`, and styles to `style.css` using the existing tokens.
+
+## License
+
+cbshare is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3. See [LICENSE](LICENSE).

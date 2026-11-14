@@ -1,16 +1,16 @@
 # Security model
 
-cpsync is built for a small, trusted group on a private network. This page explains what it protects against, and what it doesn't.
+cbshare is built for a small, trusted group on a private network. This page explains what it protects against, and what it doesn't.
 
 ## What is protected
 
 ### In transit
 
-All traffic uses HTTPS with TLS 1.2 or later. Without a certificate of your own, cpsync uses a self-signed ECDSA certificate. Browsers can't verify it automatically, so the first visit shows a warning; compare the SHA-256 fingerprint printed in the console with the one the browser shows to be sure you are talking to your server.
+All traffic uses HTTPS with TLS 1.2 or later. Without a certificate of your own, cbshare uses a self-signed ECDSA certificate. Browsers can't verify it automatically, so the first visit shows a warning; compare the SHA-256 fingerprint printed in the console with the one the browser shows to be sure you are talking to your server.
 
 ### At rest
 
-Everything cpsync stores is in one SQLite database encrypted with the [Adiantum](https://github.com/ncruces/go-sqlite3/tree/main/vfs/adiantum) construction: every page of the database and of its journal is encrypted. The file cannot be opened with a SQLite client, and its content, including messages, files, every user's authenticator secret and the TLS key, is unreadable without the key.
+Everything cbshare stores is in one SQLite database encrypted with the [Adiantum](https://github.com/ncruces/go-sqlite3/tree/main/vfs/adiantum) construction: every page of the database and of its journal is encrypted. The file cannot be opened with a SQLite client, and its content, including messages, files, every user's authenticator secret and the TLS key, is unreadable without the key.
 
 The 256-bit key is derived at first start with Argon2id from the admin password, a random 16-byte salt and the current time. Starting twice with the same password therefore gives two different keys. The key is printed once, with a checksum that catches typos, and held only in the server's memory while it runs.
 
@@ -30,23 +30,23 @@ The admin password is not stored; only an Argon2id hash of it is, for the admin 
 
 ### In the browser
 
-- A strict Content Security Policy allows only cpsync's own script and styles: no inline code, no third-party content, no framing.
-- State-changing requests need a per-session anti-CSRF token and must come from the cpsync page itself (checked with the `Origin` and `Sec-Fetch-Site` headers). JSON endpoints only accept `application/json`.
+- A strict Content Security Policy allows only cbshare's own script and styles: no inline code, no third-party content, no framing.
+- State-changing requests need a per-session anti-CSRF token and must come from the cbshare page itself (checked with the `Origin` and `Sec-Fetch-Site` headers). JSON endpoints only accept `application/json`.
 - Messages are inserted as text, never as HTML.
-- Shared files are always served as downloads (`Content-Disposition: attachment`, `application/octet-stream`, `nosniff`), so a malicious file can't run inside cpsync's page.
+- Shared files are always served as downloads (`Content-Disposition: attachment`, `application/octet-stream`, `nosniff`), so a malicious file can't run inside cbshare's page.
 
 ## What is not protected
 
 !!! warning "Know these limits"
     - **An account is only as safe as its authenticator.** Anyone holding a user's phone or authenticator entry can sign in as them. Revoke the account or give it a new QR code when a phone is lost.
-    - **QR codes travel outside cpsync.** The admin passes each code on by some other means; a photo sent through an insecure channel can be copied. Use a private channel, and give a new code if in doubt.
+    - **QR codes travel outside cbshare.** The admin passes each code on by some other means; a photo sent through an insecure channel can be copied. Use a private channel, and give a new code if in doubt.
     - **The admin code cannot be recovered.** If the admin loses it, nobody can add users or replace codes; the only way out is a new database.
     - **Everyone signed in sees everything.** There are no private messages. Don't post something the whole group shouldn't see.
-    - **The server machine is trusted.** While cpsync runs, the key is in its memory. Someone with administrator access to that machine can read it.
-    - **The key and password are visible on the command line** to other users of the same machine (process list, shell history). Use the `CPSYNC_KEY` and `CPSYNC_PASSWORD` environment variables on shared machines.
-    - **Deleted data**: cpsync enables SQLite's secure delete, which overwrites deleted content, and the database is encrypted anyway. Copies made by backups or file-system snapshots are outside cpsync's control.
+    - **The server machine is trusted.** While cbshare runs, the key is in its memory. Someone with administrator access to that machine can read it.
+    - **The key and password are visible on the command line** to other users of the same machine (process list, shell history). Use the `CBSHARE_KEY` and `CBSHARE_PASSWORD` environment variables on shared machines.
+    - **Deleted data**: cbshare enables SQLite's secure delete, which overwrites deleted content, and the database is encrypted anyway. Copies made by backups or file-system snapshots are outside cbshare's control.
     - **Self-signed certificates** are only as good as your habit of checking the fingerprint. Use your own certificate if your network has a certificate authority.
 
 ## Reporting a problem
 
-Open an issue on [GitHub](https://github.com/pycloux/cpsync/issues). For a vulnerability, contact the maintainer privately first.
+Open an issue on [GitHub](https://github.com/pycloux/cbshare/issues). For a vulnerability, contact the maintainer privately first.

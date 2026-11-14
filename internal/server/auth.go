@@ -28,14 +28,14 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/pycloux/cpsync/internal/auth"
-	"github.com/pycloux/cpsync/internal/crypto"
-	"github.com/pycloux/cpsync/internal/store"
+	"github.com/pycloux/cbshare/internal/auth"
+	"github.com/pycloux/cbshare/internal/crypto"
+	"github.com/pycloux/cbshare/internal/store"
 )
 
 const (
-	sessionCookie = "cpsync_session"
-	setupCookie   = "cpsync_setup"
+	sessionCookie = "cbshare_session"
+	setupCookie   = "cbshare_setup"
 
 	maxUsernameLen  = 32
 	enrollmentValid = 15 * time.Minute
@@ -436,7 +436,7 @@ func clearCookie(w http.ResponseWriter, name string) {
 }
 
 // clientIP returns the address of the TCP peer. Headers such as
-// X-Forwarded-For are deliberately ignored: cpsync is reached directly on
+// X-Forwarded-For are deliberately ignored: cbshare is reached directly on
 // the LAN, and trusting such headers would let a client pick the address
 // that gets locked out.
 func clientIP(r *http.Request) string {

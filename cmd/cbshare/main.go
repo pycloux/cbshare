@@ -1,4 +1,4 @@
-// Command cpsync shares text and small files between machines on a LAN
+// Command cbshare shares text and small files between machines on a LAN
 // through an encrypted, OTP-protected group-chat web interface.
 //
 // This file only wires the pieces together; the work happens in the
@@ -34,11 +34,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/pycloux/cpsync/internal/config"
-	"github.com/pycloux/cpsync/internal/crypto"
-	"github.com/pycloux/cpsync/internal/server"
-	"github.com/pycloux/cpsync/internal/store"
-	"github.com/pycloux/cpsync/internal/tlsutil"
+	"github.com/pycloux/cbshare/internal/config"
+	"github.com/pycloux/cbshare/internal/crypto"
+	"github.com/pycloux/cbshare/internal/server"
+	"github.com/pycloux/cbshare/internal/store"
+	"github.com/pycloux/cbshare/internal/tlsutil"
 )
 
 // version is set at build time with -ldflags "-X main.version=...".
@@ -64,7 +64,7 @@ func run() error {
 		return err
 	}
 	if opts.ShowVersion {
-		fmt.Println("cpsync", version)
+		fmt.Println("cbshare", version)
 		return nil
 	}
 	autoBind := cfg.Bind == ""
@@ -100,7 +100,7 @@ func run() error {
 	}
 
 	// 5. Tell the operator how to reach the server, then serve.
-	fmt.Printf("\ncpsync %s\n%s", version, cfg.Describe())
+	fmt.Printf("\ncbshare %s\n%s", version, cfg.Describe())
 	switch {
 	case tlsRes.Generated:
 		fmt.Println("\nGenerated a new self-signed TLS certificate.")
@@ -139,12 +139,12 @@ func run() error {
 }
 
 // openStore creates the database on first start (--password) or opens it on
-// restart (--key). The values can also come from the CPSYNC_PASSWORD and
-// CPSYNC_KEY environment variables, which keeps them out of shell history.
+// restart (--key). The values can also come from the CBSHARE_PASSWORD and
+// CBSHARE_KEY environment variables, which keeps them out of shell history.
 func openStore(ctx context.Context, cfg config.Config, opts config.Options) (*store.Store, error) {
 	password, key := opts.Password, opts.Key
 	if password == "" && key == "" {
-		password, key = os.Getenv("CPSYNC_PASSWORD"), os.Getenv("CPSYNC_KEY")
+		password, key = os.Getenv("CBSHARE_PASSWORD"), os.Getenv("CBSHARE_KEY")
 	}
 	switch {
 	case password != "" && key != "":
@@ -163,7 +163,7 @@ func openStore(ctx context.Context, cfg config.Config, opts config.Options) (*st
 		fmt.Printf("Database %s unlocked.\n", cfg.Database)
 		return st, nil
 	default:
-		return nil, errors.New("missing --password (first start) or --key (restart); run cpsync --help")
+		return nil, errors.New("missing --password (first start) or --key (restart); run cbshare --help")
 	}
 }
 
@@ -223,7 +223,7 @@ func firstStart(ctx context.Context, cfg config.Config, password string) (*store
 	fmt.Println(" If it is lost, the database cannot be recovered.")
 	fmt.Println()
 	fmt.Printf("   %s\n\n", enc)
-	fmt.Printf(" Restart with:  cpsync --key %s\n", enc)
+	fmt.Printf(" Restart with:  cbshare --key %s\n", enc)
 	fmt.Println("================================================================================")
 	return st, nil
 }
@@ -236,7 +236,7 @@ func loopbackWarning(bind string, autoBind bool) string {
 	if !autoBind || ip == nil || !ip.IsLoopback() {
 		return ""
 	}
-	return "\nWARNING: no network address was found, so cpsync listens on " + bind + " only.\n" +
+	return "\nWARNING: no network address was found, so cbshare listens on " + bind + " only.\n" +
 		"         Other machines cannot connect. Check the network connection, or choose\n" +
 		"         an address with --bind (for example --bind 0.0.0.0 for every interface).\n"
 }

@@ -1,6 +1,6 @@
 "use strict";
 
-// cpsync front end. No framework, no build step: this file is embedded in
+// cbshare front end. No framework, no build step: this file is embedded in
 // the server executable and served as is.
 //
 // The page (index.html) contains every screen; exactly one is visible:
@@ -98,7 +98,7 @@ function show(name) {
   let focusable = $(`#screen-${name} input:not([type=file]), #screen-${name} textarea`);
   if (name === "login" && $("#login-username").value) focusable = $("#login-code");
   if (focusable) setTimeout(() => focusable.focus(), 0);
-  document.title = name === "chat" ? "cpsync" : "cpsync – sign in";
+  document.title = name === "chat" ? "cbshare" : "cbshare – sign in";
 }
 
 // setError writes msg into the .error element of scope ("" clears it).
@@ -225,7 +225,7 @@ $("#form-login").addEventListener("submit", async (ev) => {
 // The last username is remembered in this browser, so that people only
 // type the code next time. Storage can be unavailable (private windows,
 // blocked site data): the page then simply asks for the name again.
-const usernameKey = "cpsync.username";
+const usernameKey = "cbshare.username";
 function rememberedUsername() {
   try { return localStorage.getItem(usernameKey) || ""; } catch (e) { return ""; }
 }
@@ -494,7 +494,7 @@ function render(messages) {
     const incoming = messages.filter((m) => !known.has(m.id) && !isOwn(m)).length;
     if (incoming) {
       chat.unread += incoming;
-      document.title = `(${chat.unread}) cpsync`;
+      document.title = `(${chat.unread}) cbshare`;
     }
   }
   chat.loaded = true;
@@ -505,7 +505,7 @@ function render(messages) {
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden && chat.unread) {
     chat.unread = 0;
-    if (chat.active) document.title = "cpsync";
+    if (chat.active) document.title = "cbshare";
   }
 });
 
@@ -536,7 +536,7 @@ function messageNode(m, version) {
   if (m.kind !== "system") art.style.setProperty("--cable", cableFor(m.author));
 
   const head = el("header", "msg-head");
-  const author = el("span", "msg-author", m.kind === "system" ? "cpsync" : m.author);
+  const author = el("span", "msg-author", m.kind === "system" ? "cbshare" : m.author);
   if (m.authorDeleted) author.append(el("span", "gone", "(deleted user)"));
   head.append(author);
   const time = el("time", "msg-time", formatTime(m.createdAt) + (m.editedAt ? " (edited)" : ""));
@@ -1084,7 +1084,7 @@ async function deleteUser(u) {
 function showUserQR(user, enr) {
   $("#user-qr-title").textContent = `QR code for ${user.name}`;
   $("#user-qr-img").src = enr.qr;
-  $("#user-qr-img").alt = `QR code for ${user.name}'s cpsync account`;
+  $("#user-qr-img").alt = `QR code for ${user.name}'s cbshare account`;
   $("#user-qr-secret").textContent = enr.secret;
   $("#user-qr-deadline").textContent = `${user.name} signs in with the username "${user.name}" and must do so before ${formatDeadline(user.enrolExpiresAt)}, or the code expires.`;
   $("#dlg-user-qr").showModal();

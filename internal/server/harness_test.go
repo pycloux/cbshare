@@ -32,9 +32,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pycloux/cpsync/internal/auth"
-	"github.com/pycloux/cpsync/internal/config"
-	"github.com/pycloux/cpsync/internal/store"
+	"github.com/pycloux/cbshare/internal/auth"
+	"github.com/pycloux/cbshare/internal/config"
+	"github.com/pycloux/cbshare/internal/store"
 )
 
 // harness runs a Server behind an httptest TLS server.

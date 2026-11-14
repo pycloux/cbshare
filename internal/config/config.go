@@ -1,11 +1,11 @@
-// Package config holds cpsync's runtime configuration: built-in defaults,
+// Package config holds cbshare's runtime configuration: built-in defaults,
 // an optional YAML file and command-line flags, applied in that order, so
 // that a flag always wins over the file and the file over the defaults.
 //
 // To add a setting: add a field to Config (with its yaml tag), its default
 // in Default, a check in Validate, a flag in Parse (and its case in the
 // fs.Visit switch), a line in Describe, and document it in README.md,
-// docs/configuration.md and cpsync.example.yaml.
+// docs/configuration.md and cbshare.example.yaml.
 package config
 
 import (
@@ -26,11 +26,11 @@ const (
 	ModePolling = "polling"
 )
 
-// MaxUsersLimit is the highest accepted value of max_users. cpsync is meant
+// MaxUsersLimit is the highest accepted value of max_users. cbshare is meant
 // for a small group; the limit keeps the admin's user list manageable.
 const MaxUsersLimit = 100
 
-// Config is the effective configuration of a cpsync server.
+// Config is the effective configuration of a cbshare server.
 type Config struct {
 	// Network
 	Port int    `yaml:"port"`
@@ -74,7 +74,7 @@ func Default() Config {
 	return Config{
 		Port:              8443,
 		Bind:              "",
-		Database:          "cpsync.db",
+		Database:          "cbshare.db",
 		MaxMessages:       20,
 		MaxFileSizeMB:     20,
 		MaxUsers:          10,
@@ -157,7 +157,7 @@ func Parse(args []string, stderr io.Writer) (Config, Options, error) {
 	cfg := Default()
 	var opts Options
 
-	fs := flag.NewFlagSet("cpsync", flag.ContinueOnError)
+	fs := flag.NewFlagSet("cbshare", flag.ContinueOnError)
 	fs.SetOutput(stderr)
 
 	// The flag package writes every flag's value, set or not, so flags are
@@ -185,9 +185,9 @@ func Parse(args []string, stderr io.Writer) (Config, Options, error) {
 	fs.IntVar(&fl.PINLength, "pin-length", fl.PINLength, "length of the setup PIN")
 
 	fs.Usage = func() {
-		fmt.Fprintf(stderr, "cpsync - share text and files on your LAN\n\n")
-		fmt.Fprintf(stderr, "First start:  cpsync --password <admin password> [options]\n")
-		fmt.Fprintf(stderr, "Restart:      cpsync --key <key printed at first start> [options]\n\n")
+		fmt.Fprintf(stderr, "cbshare - share text and files on your LAN\n\n")
+		fmt.Fprintf(stderr, "First start:  cbshare --password <admin password> [options]\n")
+		fmt.Fprintf(stderr, "Restart:      cbshare --key <key printed at first start> [options]\n\n")
 		fmt.Fprintf(stderr, "Options:\n")
 		fs.PrintDefaults()
 	}

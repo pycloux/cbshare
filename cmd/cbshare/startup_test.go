@@ -9,8 +9,8 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/pycloux/cpsync/internal/config"
-	"github.com/pycloux/cpsync/internal/store"
+	"github.com/pycloux/cbshare/internal/config"
+	"github.com/pycloux/cbshare/internal/store"
 )
 
 // cancelAfter is a context whose Err reports cancellation from its n-th
@@ -31,7 +31,7 @@ func (c *cancelAfter) Err() error {
 
 func firstStartConfig(t *testing.T) config.Config {
 	cfg := config.Default()
-	cfg.Database = filepath.Join(t.TempDir(), "cpsync.db")
+	cfg.Database = filepath.Join(t.TempDir(), "cbshare.db")
 	return cfg
 }
 

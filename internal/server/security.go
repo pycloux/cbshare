@@ -21,7 +21,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/pycloux/cpsync/internal/crypto"
+	"github.com/pycloux/cbshare/internal/crypto"
 )
 
 // contentSecurityPolicy allows only the embedded front end: no inline

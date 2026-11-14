@@ -1,0 +1,16 @@
+/cpsync
+/cpsync.exe
+/dist/
+/site/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# External test outputs (tests/e2e)
+/tests/e2e/test-results/
+/tests/e2e/report.html
+/tests/e2e/results.json
+/tests/e2e/junit.xml
+__pycache__/
+.venv/

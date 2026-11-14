@@ -1,0 +1,492 @@
+# Every case of the manual test plan, with its priority and how it is covered.
+#
+#   automation: automated  a test in this folder is marked with this ID
+#               planned    will be automated in a later pull request (#19)
+#               manual     cannot be automated; stays in the manual test plan
+#               suite      covered by running the whole suite (no single test)
+#   manual_part: what remains manual for a case that is only partly automated
+#
+# tests/e2e/test_consistency.py checks that this file and the tests agree.
+
+SU-01:
+  title: "First start creates the database"
+  priority: P1
+  automation: automated
+SU-02:
+  title: "First start is refused when a database exists"
+  priority: P1
+  automation: automated
+SU-03:
+  title: "The database file is encrypted"
+  priority: P1
+  automation: automated
+SU-04:
+  title: "Restart with the key"
+  priority: P1
+  automation: automated
+SU-05:
+  title: "Mistyped keys are recognised"
+  priority: P2
+  automation: automated
+SU-06:
+  title: "A key from another database is refused"
+  priority: P1
+  automation: automated
+SU-07:
+  title: "Password and key are mutually exclusive and required"
+  priority: P2
+  automation: automated
+SU-08:
+  title: "Password and key from environment variables"
+  priority: P2
+  automation: automated
+SU-09:
+  title: "Flags override the defaults"
+  priority: P2
+  automation: automated
+SU-10:
+  title: "YAML file and precedence"
+  priority: P2
+  automation: automated
+SU-11:
+  title: "Invalid configuration is rejected"
+  priority: P2
+  automation: automated
+SU-12:
+  title: "Help and version"
+  priority: P3
+  automation: automated
+SU-13:
+  title: "Clean stop"
+  priority: P2
+  automation: automated
+NET-01:
+  title: "Self-signed certificate and fingerprint"
+  priority: P1
+  automation: automated
+NET-02:
+  title: "Access from every client"
+  priority: P1
+  automation: manual
+  reason: "Several physical machines on a LAN, and the Windows firewall prompt."
+NET-03:
+  title: "Plain HTTP is not served"
+  priority: P2
+  automation: automated
+NET-04:
+  title: "Custom certificate"
+  priority: P2
+  automation: automated
+NET-05:
+  title: "Bind address"
+  priority: P2
+  automation: automated
+NET-06:
+  title: "Certificate renewed when the address changes"
+  priority: P3
+  automation: automated
+SET-01:
+  title: "Every visitor sees the PIN screen before setup"
+  priority: P1
+  automation: automated
+SET-02:
+  title: "A wrong PIN is refused and reported"
+  priority: P1
+  automation: automated
+SET-03:
+  title: "The PIN is not case-sensitive"
+  priority: P3
+  automation: automated
+SET-04:
+  title: "Correct PIN, QR code and confirmation create the admin account"
+  priority: P1
+  automation: automated
+SET-05:
+  title: "The setup QR code is the admin account's own entry"
+  priority: P1
+  automation: automated
+  manual_part: "Scanning a photo of the QR code with real authenticator apps."
+SET-06:
+  title: "Only the browser that entered the PIN can confirm"
+  priority: P2
+  automation: automated
+SET-07:
+  title: "A setup left open expires"
+  priority: P3
+  automation: automated
+SET-08:
+  title: "Restart before setup is completed"
+  priority: P2
+  automation: automated
+AUTH-01:
+  title: "Sign in with a username and the current code"
+  priority: P1
+  automation: automated
+AUTH-02:
+  title: "A wrong code or unknown name is refused, with the same answer"
+  priority: P1
+  automation: automated
+AUTH-03:
+  title: "Clock tolerance"
+  priority: P3
+  automation: automated
+AUTH-04:
+  title: "Usernames match whatever their case and spacing"
+  priority: P2
+  automation: automated
+AUTH-05:
+  title: "Same user in two browsers"
+  priority: P2
+  automation: automated
+AUTH-06:
+  title: "Sign out"
+  priority: P1
+  automation: automated
+AUTH-07:
+  title: "Closing the browser ends the session"
+  priority: P1
+  automation: automated
+AUTH-08:
+  title: "Inactivity timeout"
+  priority: P1
+  automation: automated
+AUTH-09:
+  title: "Activity keeps the session alive"
+  priority: P2
+  automation: automated
+AUTH-10:
+  title: "Reloading keeps the session"
+  priority: P2
+  automation: automated
+AUTH-11:
+  title: "A server restart ends every session"
+  priority: P2
+  automation: automated
+LOCK-01:
+  title: "Lockout after 5 failures"
+  priority: P1
+  automation: automated
+LOCK-02:
+  title: "The lockout expires"
+  priority: P2
+  automation: automated
+LOCK-03:
+  title: "The lockout only affects one address"
+  priority: P1
+  automation: automated
+LOCK-04:
+  title: "A success resets the count"
+  priority: P2
+  automation: automated
+LOCK-05:
+  title: "Every kind of credential counts"
+  priority: P2
+  automation: automated
+LOCK-06:
+  title: "Alerts reach everyone and the console"
+  priority: P1
+  automation: automated
+CHAT-01:
+  title: "Post a message"
+  priority: P1
+  automation: automated
+CHAT-02:
+  title: "Scripts keep their exact formatting"
+  priority: P1
+  automation: automated
+CHAT-03:
+  title: "Copy gives back the exact text"
+  priority: P1
+  automation: automated
+CHAT-04:
+  title: "Empty messages are not sent"
+  priority: P3
+  automation: automated
+CHAT-05:
+  title: "Text that looks like HTML is shown as text"
+  priority: P1
+  automation: automated
+CHAT-06:
+  title: "International text and emoji"
+  priority: P3
+  automation: automated
+CHAT-07:
+  title: "Very long messages"
+  priority: P3
+  automation: automated
+CHAT-08:
+  title: "Authors are easy to tell apart"
+  priority: P2
+  automation: automated
+FILE-01:
+  title: "Share a file with the + button"
+  priority: P1
+  automation: automated
+FILE-02:
+  title: "The message box becomes the caption"
+  priority: P2
+  automation: automated
+FILE-03:
+  title: "Drag and drop"
+  priority: P2
+  automation: automated
+FILE-04:
+  title: "Downloads are identical to the original"
+  priority: P1
+  automation: automated
+FILE-05:
+  title: "Size limit"
+  priority: P1
+  automation: automated
+FILE-06:
+  title: "Unusual file names"
+  priority: P2
+  automation: automated
+FILE-07:
+  title: "Shared files are never opened in the page"
+  priority: P1
+  automation: automated
+FILE-08:
+  title: "Downloads require a session"
+  priority: P1
+  automation: automated
+EDIT-01:
+  title: "Edit your own message"
+  priority: P1
+  automation: automated
+EDIT-02:
+  title: "Cancel an edit"
+  priority: P2
+  automation: automated
+EDIT-03:
+  title: "Save with the keyboard"
+  priority: P3
+  automation: automated
+EDIT-04:
+  title: "Edit a file's caption"
+  priority: P2
+  automation: automated
+EDIT-05:
+  title: "Other people's messages cannot be changed"
+  priority: P1
+  automation: automated
+EDIT-06:
+  title: "Delete your own message"
+  priority: P1
+  automation: automated
+EDIT-07:
+  title: "Changes made by someone else during an edit"
+  priority: P3
+  automation: automated
+RET-01:
+  title: "Only the latest messages are kept"
+  priority: P1
+  automation: automated
+RET-02:
+  title: "Files are deleted with their message"
+  priority: P1
+  automation: automated
+RET-03:
+  title: "System messages count toward the limit"
+  priority: P2
+  automation: automated
+RET-04:
+  title: "Changing the limit"
+  priority: P3
+  automation: automated
+LIVE-01:
+  title: "Live updates in SSE mode"
+  priority: P1
+  automation: automated
+LIVE-02:
+  title: "Reconnecting after a network cut"
+  priority: P2
+  automation: automated
+LIVE-03:
+  title: "Polling mode"
+  priority: P1
+  automation: automated
+LIVE-04:
+  title: "Polling interval"
+  priority: P3
+  automation: automated
+LIVE-05:
+  title: "Unread count in the tab title"
+  priority: P3
+  automation: automated
+LIVE-06:
+  title: "Several clients at once"
+  priority: P3
+  automation: automated
+ADM-01:
+  title: "Unlock admin (admin account only)"
+  priority: P1
+  automation: automated
+ADM-02:
+  title: "Moderate any message"
+  priority: P1
+  automation: automated
+ADM-03:
+  title: "Lock admin"
+  priority: P2
+  automation: automated
+ADM-04:
+  title: "Admin rights end with the session"
+  priority: P2
+  automation: automated
+ADM-05:
+  title: "Prepare a new admin code, then keep the current one"
+  priority: P1
+  automation: automated
+ADM-06:
+  title: "Replace the admin's own code; only the admin is signed out"
+  priority: P1
+  automation: automated
+ADM-07:
+  title: "Rotation in polling mode"
+  priority: P2
+  automation: automated
+USR-01:
+  title: "Add a user and sign in with their QR code"
+  priority: P1
+  automation: automated
+USR-02:
+  title: "Username rules, duplicates and reserved names"
+  priority: P1
+  automation: automated
+USR-03:
+  title: "The user limit is enforced and configurable"
+  priority: P2
+  automation: automated
+USR-04:
+  title: "The QR code is shown only once"
+  priority: P1
+  automation: automated
+USR-05:
+  title: "An unused QR code expires after 24 hours"
+  priority: P1
+  automation: automated
+  manual_part: "The real 24-hour window (the test build shortens it with CPSYNC_TEST_ENROLMENT_WINDOW)."
+USR-06:
+  title: "Revoke signs the user out and blocks sign-in"
+  priority: P1
+  automation: automated
+USR-07:
+  title: "New QR code replaces the old one"
+  priority: P1
+  automation: automated
+USR-08:
+  title: "Delete keeps messages, marked as from a deleted user"
+  priority: P1
+  automation: automated
+USR-09:
+  title: "A deleted name can be reused without inheriting messages"
+  priority: P2
+  automation: automated
+USR-10:
+  title: "One user's code does not work for another"
+  priority: P1
+  automation: automated
+USR-11:
+  title: "The admin account cannot be revoked or deleted"
+  priority: P2
+  automation: automated
+USR-12:
+  title: "Only the admin user sees and unlocks Admin"
+  priority: P1
+  automation: automated
+USR-13:
+  title: "A replayed code is refused"
+  priority: P2
+  automation: automated
+USR-14:
+  title: "A v0.2 database is refused with a clear message"
+  priority: P2
+  automation: manual
+  reason: "Needs a database created by cpsync v0.2; the Go test TestOldSchemaRefused covers the refusal."
+SEC-01:
+  title: "Security headers"
+  priority: P1
+  automation: automated
+SEC-02:
+  title: "The API requires a session"
+  priority: P1
+  automation: automated
+SEC-03:
+  title: "State changes require the CSRF token"
+  priority: P1
+  automation: automated
+SEC-04:
+  title: "The server enforces ownership"
+  priority: P1
+  automation: automated
+SEC-05:
+  title: "Requests from other sites are rejected"
+  priority: P1
+  automation: automated
+SEC-06:
+  title: "Admin endpoints require admin rights"
+  priority: P1
+  automation: automated
+SEC-07:
+  title: "Setup cannot be repeated"
+  priority: P2
+  automation: automated
+SEC-08:
+  title: "Session cookie protection"
+  priority: P1
+  automation: automated
+SEC-09:
+  title: "The page cannot be embedded in another site"
+  priority: P2
+  automation: automated
+SEC-10:
+  title: "No secrets in the console log"
+  priority: P2
+  automation: automated
+UI-01:
+  title: "Supported browsers"
+  priority: P1
+  automation: automated
+  manual_part: "Real phone browsers (Safari on iPhone, Chrome on Android) and Edge on Windows."
+UI-02:
+  title: "Phone layout"
+  priority: P2
+  automation: automated
+  manual_part: "Phone layout with the real on-screen keyboard."
+UI-03:
+  title: "Light and dark mode"
+  priority: P2
+  automation: automated
+UI-04:
+  title: "Keyboard only"
+  priority: P2
+  automation: automated
+UI-05:
+  title: "Screen reader basics"
+  priority: P3
+  automation: manual
+  reason: "Screen readers (NVDA, VoiceOver, TalkBack)."
+UI-06:
+  title: "Zoom and reduced motion"
+  priority: P3
+  automation: automated
+UI-07:
+  title: "Server unreachable"
+  priority: P3
+  automation: automated
+PLAT-01:
+  title: "Windows server"
+  priority: P1
+  automation: manual
+  reason: "Windows server: the external suite runs on Linux only (the Go tests still run on Windows in CI)."
+PLAT-02:
+  title: "Linux server"
+  priority: P1
+  automation: suite
+  manual_part: "arm64 hardware (Raspberry Pi 4 or 5)."
+PLAT-03:
+  title: "Running as a service"
+  priority: P3
+  automation: manual
+  reason: "Running as a service and restarting after a reboot."

@@ -1,0 +1,51 @@
+# Dependabot version updates: every Monday, Dependabot opens pull requests
+# for new versions of the dependencies below. Minor and patch updates are
+# grouped into one pull request per ecosystem; each major update gets its
+# own pull request, since it may need code changes.
+# Options: https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference
+
+version: 2
+updates:
+  # The server's Go modules (go.mod, go.sum).
+  - package-ecosystem: "gomod"
+    directory: "/"
+    target-branch: "develop"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    groups:
+      go-minor-and-patch:
+        update-types: ["minor", "patch"]
+
+  # Actions used by the workflows in .github/workflows.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    target-branch: "develop"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    groups:
+      actions-minor-and-patch:
+        update-types: ["minor", "patch"]
+
+  # The external test suite (tests/e2e/requirements.txt).
+  - package-ecosystem: "pip"
+    directory: "/tests/e2e"
+    target-branch: "develop"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    groups:
+      e2e-minor-and-patch:
+        update-types: ["minor", "patch"]
+
+  # The documentation tools (docs/requirements.txt).
+  - package-ecosystem: "pip"
+    directory: "/docs"
+    target-branch: "develop"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    groups:
+      docs-minor-and-patch:
+        update-types: ["minor", "patch"]

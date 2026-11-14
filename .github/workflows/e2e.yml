@@ -1,0 +1,106 @@
+name: External tests
+
+# Black-box tests of the built cpsync program (tests/e2e), following the
+# manual test plan (see #19):
+#   - pull requests and main: the P1 cases in Chromium;
+#   - scope "full" (releases, or run by hand): every automated case in
+#     Chromium, slow ones included, and every browser case in Firefox and
+#     WebKit.
+
+on:
+  pull_request:
+  push:
+    branches: [main,develop]
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: Cases to run
+        type: choice
+        options: [p1, full]
+        default: p1
+  workflow_call:
+    inputs:
+      scope:
+        description: p1 or full
+        type: string
+        default: full
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.workflow }}-${{ github.ref }}-${{ inputs.scope || (github.base_ref == 'main' && 'full' || 'p1') }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    name: ${{ matrix.label }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        # One entry for pull requests; three for the full suite.
+        include: >-
+          ${{ fromJSON((inputs.scope || (github.base_ref == 'main' && 'full' || 'p1')) == 'full' && '[
+            {"name": "chromium", "browser": "chromium", "markers": "p1 or p2 or p3", "label": "All cases (Linux, Chromium)"},
+            {"name": "firefox", "browser": "firefox", "markers": "browser and not slow", "label": "Browser cases (Linux, Firefox)"},
+            {"name": "webkit", "browser": "webkit", "markers": "browser and not slow", "label": "Browser cases (Linux, WebKit)"}
+          ]' || '[
+            {"name": "p1", "browser": "chromium", "markers": "p1", "label": "P1 cases (Linux, Chromium)"}
+          ]') }}
+    defaults:
+      run:
+        working-directory: tests/e2e
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Build cpsync
+        working-directory: .
+        env:
+          CGO_ENABLED: "0"
+        run: go build -trimpath -tags testhooks -o "$RUNNER_TEMP/cpsync" ./cmd/cpsync
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: tests/e2e/requirements.txt
+
+      - name: Install test dependencies
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Run the tests
+        env:
+          CPSYNC_BIN: ${{ runner.temp }}/cpsync
+        run: >
+          pytest -m "${{ matrix.markers }}" -n auto --browser ${{ matrix.browser }}
+          --case-results results.json
+          --junitxml junit.xml
+          --html report.html --self-contained-html
+
+      - name: Summary
+        if: always()
+        run: |
+          if [ -f results.json ]; then
+            python tools/summary.py results.json "External tests: ${{ matrix.label }}" >> "$GITHUB_STEP_SUMMARY" || true
+          fi
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e-report-${{ matrix.name }}
+          path: |
+            tests/e2e/report.html
+            tests/e2e/junit.xml
+            tests/e2e/results.json
+            tests/e2e/test-results/
+          if-no-files-found: ignore
+          retention-days: 14

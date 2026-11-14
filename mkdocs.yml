@@ -1,0 +1,60 @@
+site_name: cpsync
+site_description: Share text snippets and small files between machines on your LAN.
+site_url: https://pycloux.github.io/cpsync/
+repo_url: https://github.com/pycloux/cpsync
+repo_name: pycloux/cpsync
+edit_uri: edit/main/docs/
+
+# docs/requirements.txt lists the tools that build this site; it is not a page.
+exclude_docs: |
+  requirements.txt
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.footer
+    - content.code.copy
+    - search.suggest
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font: false
+
+nav:
+  - Overview: index.md
+  - Getting started:
+      - Installation: installation.md
+      - First-time setup: first-start.md
+  - Using cpsync:
+      - Daily use: using.md
+      - Administration: administration.md
+  - Reference:
+      - Configuration: configuration.md
+      - Security model: security.md
+      - Troubleshooting: troubleshooting.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.keys

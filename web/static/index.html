@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<title>cpsync</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+
+<!-- First-time setup, step 1: PIN from the server console -->
+<section class="gate" id="screen-setup-pin" hidden>
+  <div class="panel">
+    <div class="cables" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <form class="panel-body" id="form-setup-pin">
+      <p class="wordmark">cpsync</p>
+      <h1>Set up cpsync</h1>
+      <p>Enter the setup PIN printed in the server console when it started.</p>
+      <div class="field">
+        <label for="setup-pin">Setup PIN</label>
+        <input class="input code" id="setup-pin" name="pin" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="32" required>
+      </div>
+      <p class="error" role="alert"></p>
+      <button class="btn block" type="submit">Continue</button>
+    </form>
+  </div>
+</section>
+
+<!-- First-time setup, step 2: the admin account's QR code -->
+<section class="gate" id="screen-setup-qr" hidden>
+  <div class="panel">
+    <div class="cables" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="panel-body">
+      <p class="wordmark">cpsync</p>
+      <h1>Add your admin code to an authenticator</h1>
+      <p>Scan this code with an authenticator app. It is your own code for the <strong>admin</strong> account: don't share it. You'll add the other people from <strong>Admin tools → Users</strong>, each with their own code.</p>
+      <img class="qr" id="setup-qr-img" alt="QR code for the cpsync admin account">
+      <details class="secret">
+        <summary>Can't scan? Enter the key by hand</summary>
+        <code id="setup-secret"></code>
+      </details>
+      <p class="note">The code is only shown now. You can replace it later from Admin tools.</p>
+      <p class="error" role="alert"></p>
+      <button class="btn block" type="button" id="btn-setup-confirm">I've added it, continue</button>
+    </div>
+  </div>
+</section>
+
+<!-- Sign in with a username and the current one-time code -->
+<section class="gate" id="screen-login" hidden>
+  <div class="panel">
+    <div class="cables" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <form class="panel-body" id="form-login">
+      <p class="wordmark">cpsync</p>
+      <h1>Sign in</h1>
+      <p>Enter your username and the 6-digit code shown for cpsync in your authenticator app.</p>
+      <div class="field">
+        <label for="login-username">Username</label>
+        <input class="input" id="login-username" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="32" required>
+      </div>
+      <div class="field">
+        <label for="login-code">One-time code</label>
+        <input class="input code" id="login-code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9 ]{6,7}" maxlength="7" required>
+      </div>
+      <p class="error" role="alert"></p>
+      <button class="btn block" type="submit">Sign in</button>
+    </form>
+  </div>
+</section>
+
+<!-- Chat -->
+<section class="app" id="screen-chat" hidden>
+  <header class="topbar">
+    <p class="wordmark">cpsync</p>
+    <span class="status" id="status"><span id="status-text">Connecting</span></span>
+    <span class="spacer"></span>
+    <span class="me"><span id="me-name"></span><span class="badge" id="admin-badge" hidden>Admin</span></span>
+    <button class="btn quiet" type="button" id="btn-admin" hidden>Admin</button>
+    <button class="btn quiet" type="button" id="btn-logout">Sign out</button>
+    <div class="cables" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  </header>
+
+  <main class="feed" id="feed" aria-live="polite">
+    <div class="feed-inner" id="feed-inner"></div>
+  </main>
+
+  <footer class="composer">
+    <form class="composer-inner" id="form-send">
+      <button class="btn quiet attach" type="button" id="btn-attach" title="Attach a file" aria-label="Attach a file">+</button>
+      <label class="sr-only" for="compose">Message</label>
+      <textarea id="compose" rows="1" placeholder="Paste a snippet or note" spellcheck="false"></textarea>
+      <button class="btn" type="submit" id="btn-send">Send</button>
+      <input type="file" id="file-input" hidden>
+    </form>
+    <p class="hint" id="hint">Ctrl+Enter to send. Drop a file anywhere to share it.</p>
+  </footer>
+</section>
+
+<div class="drop" id="drop" hidden>Drop to share this file</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<!-- Admin sign-in -->
+<dialog id="dlg-admin">
+  <form class="panel-body" id="form-admin" method="dialog">
+    <h2>Admin</h2>
+    <p>Enter the admin password used when the server was first started.</p>
+    <div class="field">
+      <label for="admin-password">Admin password</label>
+      <input class="input" type="password" id="admin-password" autocomplete="current-password" required>
+    </div>
+    <p class="error" role="alert"></p>
+    <div class="dialog-actions">
+      <button class="btn quiet" type="button" data-close>Cancel</button>
+      <button class="btn" type="submit">Unlock admin</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Admin tools -->
+<dialog id="dlg-admin-tools">
+  <div class="panel-body">
+    <div id="rotate-step-1">
+      <h2>Admin tools</h2>
+      <p>You can edit and delete any message while admin is unlocked.</p>
+      <h3>Users</h3>
+      <p>Add people, give them a new QR code, revoke their access or remove them.</p>
+      <div class="dialog-actions start">
+        <button class="btn" type="button" id="btn-users">Manage users</button>
+      </div>
+      <h3>Replace my QR code</h3>
+      <p>Creates a new code for your admin account. Other users are not affected; you are signed out and sign in again with the new code.</p>
+      <div class="dialog-actions">
+        <button class="btn quiet" type="button" id="btn-admin-lock">Lock admin</button>
+        <button class="btn quiet" type="button" data-close>Close</button>
+        <button class="btn danger" type="button" id="btn-rotate">Replace my QR code</button>
+      </div>
+    </div>
+    <div id="rotate-step-2" hidden>
+      <h2>Your new admin code</h2>
+      <img class="qr" id="rotate-qr-img" alt="New QR code for the cpsync admin account">
+      <details class="secret">
+        <summary>Can't scan? Enter the key by hand</summary>
+        <code id="rotate-secret"></code>
+      </details>
+      <p class="note">Scan it now. When you continue, your current code stops working and you are signed out.</p>
+      <p class="error" role="alert"></p>
+      <div class="dialog-actions">
+        <button class="btn quiet" type="button" id="btn-rotate-cancel">Keep the current code</button>
+        <button class="btn danger" type="button" id="btn-rotate-confirm">Switch and sign me out</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- Users (admin) -->
+<dialog id="dlg-users" class="wide">
+  <div class="panel-body">
+    <h2>Users</h2>
+    <p id="users-count"></p>
+    <form class="add-user" id="form-add-user">
+      <div class="field">
+        <label for="new-username">New user's name</label>
+        <div class="field-row">
+          <input class="input" id="new-username" name="name" maxlength="32" autocomplete="off" spellcheck="false" required>
+          <button class="btn" type="submit" id="btn-add-user">Add user</button>
+        </div>
+      </div>
+      <p class="note" id="users-limit" hidden></p>
+      <p class="error" role="alert"></p>
+    </form>
+    <ul class="user-list" id="user-list" aria-label="Users"></ul>
+    <div class="dialog-actions">
+      <button class="btn quiet" type="button" data-close>Close</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- A user's new QR code, shown once -->
+<dialog id="dlg-user-qr">
+  <div class="panel-body">
+    <h2 id="user-qr-title"></h2>
+    <img class="qr" id="user-qr-img" alt="">
+    <details class="secret">
+      <summary>Can't scan? Enter the key by hand</summary>
+      <code id="user-qr-secret"></code>
+    </details>
+    <p id="user-qr-deadline"></p>
+    <p class="note warn">This QR code is shown only once. Send it to the user through a private channel, such as in person or in an encrypted messenger. Never post it in the cpsync chat.</p>
+    <div class="dialog-actions">
+      <button class="btn" type="button" data-close>Done</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Confirmation of a user action -->
+<dialog id="dlg-user-confirm">
+  <form class="panel-body" method="dialog">
+    <h2 id="user-confirm-title"></h2>
+    <p id="user-confirm-text"></p>
+    <div class="dialog-actions">
+      <button class="btn quiet" value="cancel">Cancel</button>
+      <button class="btn danger" value="confirm" id="user-confirm-btn"></button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Delete confirmation -->
+<dialog id="dlg-delete">
+  <form class="panel-body" method="dialog">
+    <h2>Delete this message?</h2>
+    <p>It is removed for everyone, together with any attached file.</p>
+    <div class="dialog-actions">
+      <button class="btn quiet" value="cancel">Keep it</button>
+      <button class="btn danger" value="delete">Delete</button>
+    </div>
+  </form>
+</dialog>
+
+</body>
+</html>

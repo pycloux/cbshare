@@ -1,0 +1,32 @@
+# cpsync example configuration.
+# Every key is optional; missing keys keep their built-in default.
+# Command-line flags override values from this file.
+# Usage: cpsync --config cpsync.yaml --key <key>
+
+# Network
+port: 8443
+# bind: 192.168.1.10      # default: auto-detected primary LAN IP; 0.0.0.0 for all interfaces
+
+# Storage
+database: cpsync.db
+
+# TLS: leave both empty to use a self-signed certificate
+# tls_cert: /path/to/cert.pem
+# tls_key: /path/to/key.pem
+
+# Chat
+max_messages: 20           # older messages (and their files) are purged
+max_file_size_mb: 20
+
+# Users
+max_users: 10              # user accounts, the admin included (1 to 100)
+
+# Real-time updates: "sse" (Server-Sent Events) or "polling"
+mode: sse
+poll_interval: 3s          # used in polling mode only
+
+# Security
+max_failed_attempts: 5     # per IP, before a lockout
+lockout_duration: 5m
+session_timeout: 30m       # inactivity timeout
+pin_length: 6              # setup PIN length

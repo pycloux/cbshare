@@ -6,9 +6,6 @@ name: Screenshots
 
 on:
   workflow_dispatch:
-  push:
-    branches: [rename-to-cbshare]
-    paths: [.github/workflows/screenshots.yml]
 
 permissions:
   contents: write

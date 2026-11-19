@@ -139,9 +139,21 @@ async function route() {
   enterChat();
 }
 
+// signOutHold is set while a request that ends this browser's own session
+// is in flight (replacing the admin code). The server signs the session out
+// before it answers, so the "logout" event or a refused request can arrive
+// first; signedOut() then only remembers its message, and the request's
+// handler decides which message to show once the answer is in.
+const signOutHold = { active: false, pending: false, message: undefined };
+
 // signedOut tears down the chat and goes back to the sign-in screen,
 // optionally explaining why.
 function signedOut(message) {
+  if (signOutHold.active) {
+    signOutHold.pending = true;
+    signOutHold.message = message;
+    return;
+  }
   leaveChat();
   if (app.state) app.state.authenticated = false;
   app.csrf = "";
@@ -887,14 +899,24 @@ $("#btn-rotate-cancel").addEventListener("click", async () => {
 $("#btn-rotate-confirm").addEventListener("click", async (ev) => {
   const btn = ev.currentTarget;
   btn.disabled = true;
+  Object.assign(signOutHold, { active: true, pending: false, message: undefined });
   try {
     await api("POST", "/api/admin/rotate/confirm");
+    signOutHold.active = false;
     resetRotation();
     $("#dlg-admin-tools").close();
     signedOut("Your admin code was replaced. Sign in with the new code from your authenticator app.");
   } catch (e) {
-    setError($("#dlg-admin-tools"), e.message);
+    signOutHold.active = false;
+    if (signOutHold.pending) {
+      // The session ended while the request failed: sign out as asked.
+      $("#dlg-admin-tools").close();
+      signedOut(signOutHold.message);
+    } else {
+      setError($("#dlg-admin-tools"), e.message);
+    }
   } finally {
+    signOutHold.active = false;
     btn.disabled = false;
   }
 });

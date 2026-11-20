@@ -8,7 +8,7 @@
 //	crypto   key derivation, password hashing, PINs and tokens
 //	store    the encrypted SQLite database
 //	tlsutil  the HTTPS certificate
-//	auth     sessions, lockout and the shared TOTP secret
+//	auth     sessions, lockout and per-user TOTP secrets
 //	server   the HTTP API and the embedded front end (package web)
 //
 // Startup sequence:
@@ -17,8 +17,8 @@
 //  2. Open the database: create it on first start (--password), or decrypt
 //     it with the key on restart (--key).
 //  3. Load or create the TLS certificate.
-//  4. Create the server, which loads the shared TOTP secret from the
-//     database or, if setup has never been done, generates a setup PIN.
+//  4. Create the server, which loads the users and their TOTP secrets from
+//     the database or, if setup has never been done, generates a setup PIN.
 //  5. Print the address (and the PIN) and serve until Ctrl+C / SIGTERM.
 package main
 

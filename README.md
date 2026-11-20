@@ -39,7 +39,6 @@ cbshare --key ABCDE-FGHIJ-...
 
 Everyone's authenticator entry keeps working after a restart.
 
-**Upgrading from v0.2**: v0.3 cannot open a v0.2 database (v0.2 had one code shared by everyone). Delete the old database and start again with `--password`.
 
 ## Using it
 
@@ -98,7 +97,7 @@ If the key is lost, the database cannot be decrypted: delete the file and start 
 
 ## Building from source
 
-Requires Go 1.24 or later.
+Requires Go 1.26.0 or later.
 
 ```sh
 make build        # ./cbshare

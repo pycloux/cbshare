@@ -98,4 +98,4 @@ The key can also come from the `CBSHARE_KEY` environment variable. Dashes, space
 After a restart there is no setup PIN: the users and their codes are read back from the database, and everyone signs in with the same app entry as before. Everyone does need to sign in again, because sessions are not kept across restarts.
 
 !!! warning "Upgrading from v0.2"
-    cbshare v0.3 replaced the shared code of v0.2 with one code per user and cannot open a v0.2 database: it stops with "this database was created by cbshare v0.2". Stop the old server, delete its database file (`cbshare.db`), and start again with `--password`. The old messages are lost, and everyone needs a new QR code.
+    Databases created by cbshare v0.2 used one authenticator code shared by everyone. This version uses a separate code for each user and cannot open those databases; it stops with "this database was created by cbshare v0.2". Stop the old server, delete its database file (`cbshare.db`), and start again with `--password`. The old messages are lost, and everyone needs a new QR code.

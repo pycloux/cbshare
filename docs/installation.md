@@ -35,7 +35,7 @@ Each release also has a `SHA256SUMS` file to check the download.
 
 ## Build from source
 
-You need Go 1.24 or later.
+You need Go 1.26.0 or later.
 
 ```sh
 git clone https://github.com/pycloux/cbshare.git

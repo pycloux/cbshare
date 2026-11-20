@@ -9,7 +9,7 @@
 : `--password` is only for the first start. Restart with `--key` and the key printed at first start.
 
 **`this database was created by cbshare v0.2, which this version cannot use`**
-: cbshare v0.3 replaced the shared code with one code per user and does not convert v0.2 databases. Stop the server, delete the database file, and start again with `--password`. The old messages are lost, and everyone needs a new QR code from the admin.
+: Databases created by cbshare v0.2 used one authenticator code shared by everyone. This version uses a separate code for each user and does not convert those databases. Stop the server, delete the database file, and start again with `--password`. The old messages are lost, and everyone needs a new QR code from the admin.
 
 **`database not found ... (start with --password to create it)`**
 : The `--db` path doesn't point to an existing database. Check the path, or create a new database with `--password`.

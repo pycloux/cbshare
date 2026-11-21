@@ -1,5 +1,6 @@
 /cbshare
 /cbshare.exe
+/cbshare-test
 /dist/
 /site/
 *.db

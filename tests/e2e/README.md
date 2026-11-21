@@ -22,7 +22,7 @@ pytest --case CHAT-02 --headed        # watch it in a visible browser
 
 Markers: `p1`, `p2` and `p3` come from `cases.yaml`; `browser` is added to every test that opens a browser (only those are worth repeating in Firefox and WebKit); `slow` marks tests that wait for real timeouts.
 
-From the repository root, `make e2e` runs the P1 cases.
+From the repository root, `make e2e` builds `cbshare-test` (with `-tags testhooks`) and runs the P1 cases against it.
 
 The tests build cbshare from this repository. To test a binary you already have, set `CBSHARE_BIN=/path/to/cbshare`. To use an installed Chromium instead of Playwright's download, set `E2E_CHROMIUM_PATH=/usr/bin/google-chrome`.
 

@@ -8,7 +8,7 @@ package server
 //	POST   /api/admin/users/{id}/revoke     withdraw access
 //	DELETE /api/admin/users/{id}            delete; their messages stay
 //
-// A new QR code must be used for a first sign-in within enrolmentWindow
+// A new QR code must be used for a first sign-in within firstSignInWindow
 // (24 hours), or it expires (janitor and handleLogin both check). QR codes
 // are returned once, in the response that creates them, and never stored
 // anywhere the browser could fetch them again. The admin passes them on to
@@ -82,7 +82,7 @@ func (s *Server) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	now := s.now()
 	u, err := s.store.CreateUser(r.Context(), store.NewUser{
-		Name: name, Status: store.StatusPending, Secret: enr.Secret, EnrolExpiresAt: now.Add(enrolmentWindow),
+		Name: name, Status: store.StatusPending, Secret: enr.Secret, EnrolExpiresAt: now.Add(firstSignInWindow),
 	}, s.cfg.MaxUsers, now)
 	switch {
 	case errors.Is(err, store.ErrNameTaken):
@@ -140,7 +140,7 @@ func (s *Server) handleUserQR(w http.ResponseWriter, r *http.Request) {
 		s.internalError(w, err)
 		return
 	}
-	expires := s.now().Add(enrolmentWindow)
+	expires := s.now().Add(firstSignInWindow)
 	if err := s.store.SetUserSecret(r.Context(), u.ID, enr.Secret, &expires); err != nil {
 		s.storeUserError(w, err)
 		return

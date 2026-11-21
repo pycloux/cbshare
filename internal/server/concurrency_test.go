@@ -56,7 +56,7 @@ func burst(t *testing.T, c *client, n int, method, path string, body any) map[in
 
 // Parallel guesses must not get around the lockout: at most
 // max_failed_attempts guesses are evaluated, the others are refused, and
-// every request is answered (none hangs behind the others). Issue #14.
+// every request is answered (none hangs behind the others).
 func TestParallelAdminPasswordGuessesRespectLockout(t *testing.T) {
 	h, _ := newAdminHarness(t)
 	c := h.login("admin")

@@ -6,6 +6,7 @@ import (
 	"log"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/pycloux/cbshare/internal/crypto"
 	"github.com/pycloux/cbshare/internal/store"
@@ -143,6 +144,29 @@ func TestRotationBelongsToItsSession(t *testing.T) {
 	}
 	a.expect(a.do("POST", "/api/admin/rotate", nil), 200)
 	b.expect(b.do("POST", "/api/admin/rotate/confirm", nil), 409)
+}
+
+// A new admin QR code must be confirmed within 15 minutes; until then the
+// current code keeps working.
+func TestRotationExpires(t *testing.T) {
+	h, secret := newAdminHarness(t)
+	admin := h.login("admin")
+	admin.expect(admin.do("POST", "/api/admin/login", map[string]string{"password": "admin-pass"}), 200)
+
+	admin.expect(admin.do("POST", "/api/admin/rotate", nil), 200)
+	h.advance(qrConfirmWindow + time.Second)
+	r := admin.expect(admin.do("POST", "/api/admin/rotate/confirm", nil), 409)
+	if r.body["code"] != "rotation_expired" {
+		t.Fatalf("got %v", r.body)
+	}
+	if u, _ := h.st.AdminUser(t.Context()); u.Secret != secret {
+		t.Fatal("an expired rotation must keep the current secret")
+	}
+
+	// A fresh rotation confirmed in time still works.
+	admin.expect(admin.do("POST", "/api/admin/rotate", nil), 200)
+	h.advance(qrConfirmWindow - time.Second)
+	admin.expect(admin.do("POST", "/api/admin/rotate/confirm", nil), 200)
 }
 
 func TestAdminLoginWithoutHashLogsReason(t *testing.T) {

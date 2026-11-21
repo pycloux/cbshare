@@ -46,6 +46,7 @@ The admin password is not stored; only an Argon2id hash of it is, for the admin 
     - **The key and password are visible on the command line** to other users of the same machine (process list, shell history). Use the `CBSHARE_KEY` and `CBSHARE_PASSWORD` environment variables on shared machines.
     - **Deleted data**: cbshare enables SQLite's secure delete, which overwrites deleted content, and the database is encrypted anyway. Copies made by backups or file-system snapshots are outside cbshare's control.
     - **Self-signed certificates** are only as good as your habit of checking the fingerprint. Use your own certificate if your network has a certificate authority.
+    - **No reverse proxy.** cbshare is meant to be reached directly. It identifies clients by their network address and deliberately ignores headers such as `X-Forwarded-For`, which a client could forge. Behind a reverse proxy, every client has the proxy's address: one person's failed attempts lock everyone out, and alerts show the proxy's address. The proxy must also pass on the `Host` header unchanged, or requests are refused as coming from another site.
 
 ## Reporting a problem
 

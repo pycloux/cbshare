@@ -138,7 +138,7 @@ func (s *Server) handleRotate(w http.ResponseWriter, r *http.Request) {
 	}
 	ss := sessionFrom(r)
 	s.mu.Lock()
-	s.rotation = &pendingRotation{session: ss.Token, secret: enr.Secret, expires: time.Now().Add(enrollmentValid)}
+	s.rotation = &pendingRotation{session: ss.Token, secret: enr.Secret, expires: s.now().Add(qrConfirmWindow)}
 	s.mu.Unlock()
 	s.log.Printf("[admin] %q generated a new QR code for the admin account (not yet active)", ss.Username)
 	writeJSON(w, http.StatusOK, enr)
@@ -158,7 +158,7 @@ func (s *Server) handleRotateConfirm(w http.ResponseWriter, r *http.Request) {
 	ss := sessionFrom(r)
 	s.mu.Lock()
 	p := s.rotation
-	if p == nil || p.session != ss.Token || time.Now().After(p.expires) {
+	if p == nil || p.session != ss.Token || s.now().After(p.expires) {
 		s.mu.Unlock()
 		writeError(w, http.StatusConflict, "rotation_expired", "This QR code has expired. Create a new one.")
 		return

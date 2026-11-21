@@ -28,11 +28,13 @@ var (
 	ErrNotFound = errors.New("database not found")
 	// ErrWrongKey is returned by Open when the key does not decrypt the database.
 	ErrWrongKey = errors.New("wrong key: the database cannot be decrypted with it")
-	// ErrOldSchema is returned by Open for a database created by cbshare
-	// v0.2, whose shared authenticator code v0.3 replaced with per-user
-	// codes. There is no migration: the database must be recreated.
-	ErrOldSchema = errors.New("this database was created by cbshare v0.2, which this version cannot use: " +
-		"delete it and start again with --password")
+	// ErrOldSchema is returned by Open for a database in the old format
+	// (schema 1), which had one authenticator code shared by everyone
+	// instead of one per user. Only cpsync v0.2, the project cbshare grew
+	// out of, wrote that format; no cbshare release did. There is no
+	// migration: the database must be recreated.
+	ErrOldSchema = errors.New("this database uses an old format with one authenticator code shared by everyone, " +
+		"which this version cannot open: delete it and start again with --password")
 )
 
 // Setting keys. The settings table is a small key/value store for the
@@ -42,8 +44,8 @@ const SettingAdminHash = "admin_password_hash"
 
 // schemaVersion is stored in SQLite's user_version pragma.
 //
-//	1  cbshare v0.2: one shared authenticator secret in settings
-//	2  cbshare v0.3: a users table with one secret per user
+//	1  one shared authenticator secret in settings (cpsync v0.2 only)
+//	2  a users table with one secret per user (every cbshare release)
 //
 // Version 1 databases are refused (ErrOldSchema); see migrate.
 const schemaVersion = 2
@@ -203,8 +205,16 @@ func databaseURI(path string, query url.Values) string {
 }
 
 // migrate creates the schema if needed. It refuses databases created by a
-// newer cbshare, whose schema this version might damage, and those created
-// by v0.2 (schema 1), which are not migrated.
+// newer cbshare, whose schema this version might damage, and those in the
+// old shared-code format (schema 1), which are not migrated.
+//
+// There is no migration code yet. When the schema changes: bump
+// schemaVersion, keep the CREATE statements in schema at the new version
+// (they build new databases), and before running them upgrade an older
+// database step by step (2 to 3, then 3 to 4...) in one transaction,
+// setting user_version at the end. Keep refusing versions newer than
+// schemaVersion. Add a store test that opens a database of each older
+// version.
 func (s *Store) migrate() error {
 	var v int
 	if err := s.db.QueryRow("PRAGMA user_version").Scan(&v); err != nil {

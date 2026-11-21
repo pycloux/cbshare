@@ -77,7 +77,9 @@ type Server struct {
 	revision atomic.Int64
 
 	// now is the clock (time.Now, replaceable in tests to cross the
-	// enrolment window). replay refuses one-time codes already used.
+	// 15-minute setup and rotation windows and the 24-hour enrolment
+	// window). Every time limit of the server uses it, never time.Now
+	// directly. replay refuses one-time codes already used.
 	// dummySecret is checked when a sign-in names an unknown user, so that
 	// the response takes as long as for a real one.
 	now         func() time.Time
@@ -212,17 +214,9 @@ func (s *Server) PublicHost() string {
 	return net.JoinHostPort(host, strconv.Itoa(s.cfg.Port))
 }
 
-// Serve listens on the configured address and serves HTTPS until ctx is
-// cancelled, then shuts down gracefully.
-func (s *Server) Serve(ctx context.Context, cert tls.Certificate) error {
-	ln, err := net.Listen("tcp", s.Addr())
-	if err != nil {
-		return err
-	}
-	return s.ServeListener(ctx, ln, cert)
-}
-
-// ServeListener serves HTTPS on ln until ctx is cancelled.
+// ServeListener serves HTTPS on ln until ctx is cancelled, then shuts down
+// gracefully. The caller opens ln (main does, so that it can print
+// "listening on" only once the port is open).
 func (s *Server) ServeListener(ctx context.Context, ln net.Listener, cert tls.Certificate) error {
 	srv := &http.Server{
 		Handler:           s.Handler(),

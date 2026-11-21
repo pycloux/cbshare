@@ -1,6 +1,6 @@
 # External tests
 
-Black-box tests of the built `cbshare` program, following the test plan case by case (see [#19](https://github.com/pycloux/cbshare/issues/19)); the case IDs, such as `LOCK-01`, are the plan's. They start the real executable and check it only from the outside, as a person would: its command line and console output, its files, its HTTPS API, and real browsers driven by [Playwright](https://playwright.dev/python/). They never import cbshare's Go code; the Go tests (`go test ./...`) cover the code from the inside.
+Black-box tests of the built `cbshare` program, following the test plan case by case (the cases a machine can't check are in the [manual test plan](../manual-plan.md)); the case IDs, such as `LOCK-01`, are the plan's. They start the real executable and check it only from the outside, as a person would: its command line and console output, its files, its HTTPS API, and real browsers driven by [Playwright](https://playwright.dev/python/). They never import cbshare's Go code; the Go tests (`go test ./...`) cover the code from the inside.
 
 ## Running the tests
 
@@ -66,7 +66,7 @@ Every test starts its own cbshare process, in its own folder and on its own port
 2. In `cases.yaml`, change the case's `automation` from `planned` to `automated`.
 3. Run `pytest --case ID`, then the whole suite.
 
-`test_consistency.py` fails if a case marked `automated` has no test, or if a test names a case that is not marked `automated`.
+`test_consistency.py` fails if a case marked `automated` has no test, if a test names a case that is not marked `automated`, or if [`tests/manual-plan.md`](../manual-plan.md) does not describe exactly the cases left to a person (`manual`, `suite`, or with a `manual_part`), with the same titles and priorities. When a case's manual part changes, update that file too.
 
 ## In continuous integration
 

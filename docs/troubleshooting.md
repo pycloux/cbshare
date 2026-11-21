@@ -55,7 +55,7 @@ Ask the admin for a new QR code (**Admin tools → Manage users → New QR code*
 
 ## "Too many failed attempts"
 
-Your IP address is locked out after 5 failures. Wait for the time shown (5 minutes by default) and try again. Everyone behind the same router or VPN address shares the lockout.
+Your IP address is locked out after 5 failures. Wait for the time shown (5 minutes by default) and try again. Everyone behind the same router, VPN address or reverse proxy shares the lockout; cbshare is meant to be reached directly, without a proxy (see [What is not protected](security.md#what-is-not-protected)).
 
 ## "Too many attempts at once" or "The server is busy checking other passwords"
 

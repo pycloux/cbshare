@@ -207,6 +207,14 @@ func databaseURI(path string, query url.Values) string {
 // migrate creates the schema if needed. It refuses databases created by a
 // newer cbshare, whose schema this version might damage, and those in the
 // old shared-code format (schema 1), which are not migrated.
+//
+// There is no migration code yet. When the schema changes: bump
+// schemaVersion, keep the CREATE statements in schema at the new version
+// (they build new databases), and before running them upgrade an older
+// database step by step (2 to 3, then 3 to 4...) in one transaction,
+// setting user_version at the end. Keep refusing versions newer than
+// schemaVersion. Add a store test that opens a database of each older
+// version.
 func (s *Store) migrate() error {
 	var v int
 	if err := s.db.QueryRow("PRAGMA user_version").Scan(&v); err != nil {

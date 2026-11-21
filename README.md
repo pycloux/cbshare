@@ -106,7 +106,7 @@ make e2e          # external tests: the P1 cases of the test plan (see tests/e2e
 make cross        # Linux and Windows binaries in dist/
 ```
 
-Pushing a tag such as `v1.0.0` starts the release workflow. It runs the Go tests on Linux and Windows and the full external test suite (every automated case of the test plan in Chromium, Firefox and WebKit), then builds the archives and publishes them on GitHub. If any test fails, nothing is published: fix it, delete the tag, and push it again.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for branches, checks and the release steps. Pushing a tag such as `v1.0.0` starts the release workflow. It runs the Go tests on Linux and Windows and the full external test suite (every automated case of the test plan in Chromium, Firefox and WebKit), then builds the archives and publishes them on GitHub. If any test fails, nothing is published: fix it, delete the tag, and push it again.
 
 Before announcing a release, run the [manual test plan](tests/manual-plan.md) on the published archives. It holds the 10 cases a machine can't check, such as real phones, a Windows server, arm64 hardware and the real 24-hour QR code window.
 

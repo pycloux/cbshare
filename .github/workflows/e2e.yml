@@ -1,11 +1,14 @@
 name: External tests
 
-# Black-box tests of the built cbshare program (tests/e2e), following the
-# manual test plan (see #19):
-#   - pull requests and main: the P1 cases in Chromium;
-#   - scope "full" (releases, or run by hand): every automated case in
-#     Chromium, slow ones included, and every browser case in Firefox and
-#     WebKit.
+# Black-box tests of the built cbshare program (tests/e2e), one test per
+# automated case of tests/e2e/cases.yaml. Two scopes:
+#   - "p1": the P1 cases in Chromium. Used for pull requests into any
+#     branch but main, and for pushes to main and develop;
+#   - "full": every automated case in Chromium, slow ones included, and
+#     every browser case in Firefox and WebKit. Used for pull requests
+#     into main, for releases (release.yml calls this workflow), and when
+#     run by hand.
+# The cases a machine can't check are in tests/manual-plan.md.
 
 on:
   pull_request:

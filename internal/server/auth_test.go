@@ -60,6 +60,31 @@ func TestSetupFlow(t *testing.T) {
 	}
 }
 
+// The admin QR code shown at setup must be confirmed within 15 minutes;
+// entering the PIN again shows a new one.
+func TestSetupConfirmationExpires(t *testing.T) {
+	h := newHarness(t, nil)
+	admin := h.client()
+	pin := h.srv.SetupPIN()
+	first := admin.expect(admin.do("POST", "/api/setup/pin", map[string]string{"pin": pin}), 200)
+
+	h.advance(qrConfirmWindow + time.Second)
+	r := admin.expect(admin.do("POST", "/api/setup/confirm", nil), 403)
+	if r.body["code"] != "setup_expired" {
+		t.Fatalf("got %v", r.body)
+	}
+	if h.srv.SetupPIN() != pin {
+		t.Fatal("an expired confirmation must leave setup open with the same PIN")
+	}
+
+	again := admin.expect(admin.do("POST", "/api/setup/pin", map[string]string{"pin": pin}), 200)
+	if again.body["secret"] == first.body["secret"] {
+		t.Fatal("entering the PIN again must show a new secret")
+	}
+	h.advance(qrConfirmWindow - time.Second) // still inside the window
+	admin.expect(admin.do("POST", "/api/setup/confirm", nil), 200)
+}
+
 func TestLoginAndLogout(t *testing.T) {
 	h := newHarness(t, nil)
 	secret := h.setup()

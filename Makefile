@@ -31,9 +31,13 @@ cross:
 	done
 
 # External tests (tests/e2e): P1 cases against a fresh build. Needs the
-# Python environment described in tests/e2e/README.md.
-e2e: build
-	cd tests/e2e && CBSHARE_BIN=$(CURDIR)/$(BINARY) pytest -m p1 -n auto
+# Python environment described in tests/e2e/README.md. The tests need a
+# binary built with -tags testhooks (USR-05 shortens the 24-hour QR code
+# window), so this builds a separate one: ./cbshare itself never contains
+# the test hooks.
+e2e:
+	CGO_ENABLED=0 go build -trimpath -tags testhooks -o $(BINARY)-test ./cmd/cbshare
+	cd tests/e2e && CBSHARE_BIN=$(CURDIR)/$(BINARY)-test pytest -m p1 -n auto
 
 clean:
-	rm -rf $(BINARY) $(BINARY).exe $(DIST)
+	rm -rf $(BINARY) $(BINARY).exe $(BINARY)-test $(DIST)

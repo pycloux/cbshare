@@ -106,9 +106,9 @@ make e2e          # external tests: the P1 cases of the test plan (see tests/e2e
 make cross        # Linux and Windows binaries in dist/
 ```
 
-Pushing a tag such as `v1.0.0` starts the release workflow. It runs the Go tests on Linux and Windows and the full external test suite (every automated case of the test plan in Chromium, Firefox and WebKit), then builds the archives and publishes them on GitHub. If any test fails, nothing is published: fix it, delete the tag, and push it again.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for branches, checks and the release steps. Pushing a tag such as `v1.0.0` starts the release workflow. It runs the Go tests on Linux and Windows and the full external test suite (every automated case of the test plan in Chromium, Firefox and WebKit), then builds the archives and publishes them on GitHub. If any test fails, nothing is published: fix it, delete the tag, and push it again.
 
-Before announcing a release, run the [manual test plan](https://claude.ai/artifact/M6TvUvY8gc9KUiQKvpg6CW) on the published archives. It holds the 8 cases a machine can't check, such as real phones, a Windows server and arm64 hardware.
+Before announcing a release, run the [manual test plan](tests/manual-plan.md) on the published archives. It holds the 10 cases a machine can't check, such as real phones, a Windows server, arm64 hardware and the real 24-hour QR code window.
 
 ## How the application is built
 
@@ -212,7 +212,7 @@ sequenceDiagram
     B->>S: chat requests (cookie + X-CSRF-Token)
 ```
 
-- **One secret per user** ([internal/auth/totp.go](internal/auth/totp.go), [internal/server/users.go](internal/server/users.go)): a valid code proves who someone is, and the account name is shown next to their messages. `handleLogin` checks the code against the named user's secret only; an unknown name is checked against a dummy secret, so every failure looks the same. A `ReplayGuard` refuses a code of a time step the user already signed in with. A new QR code waits 24 hours for its first sign-in (`enrolmentWindow`), then expires (`expireEnrolments`, also run by the janitor).
+- **One secret per user** ([internal/auth/totp.go](internal/auth/totp.go), [internal/server/users.go](internal/server/users.go)): a valid code proves who someone is, and the account name is shown next to their messages. `handleLogin` checks the code against the named user's secret only; an unknown name is checked against a dummy secret, so every failure looks the same. A `ReplayGuard` refuses a code of a time step the user already signed in with. A new QR code waits 24 hours for its first sign-in (`firstSignInWindow`), then expires (`expireEnrolments`, also run by the janitor).
 - **Sessions** ([internal/auth/sessions.go](internal/auth/sessions.go)) live only in memory. Each has a random token (in an HttpOnly cookie), a CSRF token, the user's id and name, whether it is the admin account, an admin-rights flag, and a `Done` channel closed when it ends. `EndUser` ends all of one user's sessions when their access changes. Requests marked `touch` reset the 30-minute inactivity timer; background requests (polling, event stream) don't.
 - **Lockout** ([internal/auth/limiter.go](internal/auth/limiter.go)) counts failures per IP for the PIN, the code and the admin password. Each check first reserves an attempt (`beginAttempt` in [server/auth.go](internal/server/auth.go)), which counts against the limit until it is settled as a failure (`authFailed`, which also posts a system message with the IP), a success, or cancelled; so parallel requests cannot get more guesses checked than allowed. Admin password checks (Argon2id) also wait for one of two slots (`acquireHashSlot` in [server/admin.go](internal/server/admin.go)), which bounds CPU and memory use.
 - **Admin** ([internal/server/admin.go](internal/server/admin.go)) is a flag on a session of the admin account, set after checking the password hash; other accounts are refused before the password is checked. **Rotation** replaces the admin's own secret in two steps (show, then confirm) and ends only the admin's sessions.
@@ -232,7 +232,7 @@ All in the encrypted database ([internal/store](internal/store)):
 
 **Ownership:** a message belongs to its `user_id`, not its name, since a deleted user's name can be reused. `loadOwnMessage` in [server/chat.go](internal/server/chat.go) allows edit and delete for that user or the admin; system messages can only be deleted, by the admin. Deleting a user sets `user_id` to NULL (`ON DELETE SET NULL`): the message stays, marked `authorDeleted`.
 
-**Schema version:** `PRAGMA user_version` is 2. Databases of v0.2 (version 1) are refused with `store.ErrOldSchema`; there is no migration.
+**Schema version:** `PRAGMA user_version` is 2. Databases in the old shared-code format (version 1, written only by cpsync v0.2, the project cbshare grew out of) are refused with `store.ErrOldSchema`; there is no migration.
 
 ### Live updates
 
@@ -290,6 +290,7 @@ All endpoints return JSON. "Session" means a valid session cookie; state-changin
 | `internal/server/*_test.go` | API tests against a real server with real cookies; helpers in [harness_test.go](internal/server/harness_test.go) |
 | `cmd/cbshare/main_test.go` | Builds the binary and runs first start, setup, sign-in, restart with the key |
 | [`tests/e2e`](tests/e2e) | External tests in Python (pytest + Playwright): the test plan's cases against the built program and real browsers, named by case ID |
+| [`tests/manual-plan.md`](tests/manual-plan.md) | The cases a machine can't check (real phones, Windows, arm64, screen readers, the real 24-hour QR window), run by hand before each release |
 
 Run the Go tests with `make test` (race detector included) or `go test ./...`; CI runs them on Linux and Windows. The external tests are described in [tests/e2e/README.md](tests/e2e/README.md); CI runs their P1 cases on every pull request, and every release runs them all. The few cases that need a person (real phones, Windows, arm64) are in the manual test plan linked under [Building from source](#building-from-source).
 

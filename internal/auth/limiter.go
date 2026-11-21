@@ -26,7 +26,7 @@ import (
 // requests cannot get more than max guesses evaluated: checking a
 // credential can take a while (the admin password uses Argon2id), and if
 // failures were only counted at the end, many requests could all pass the
-// check first (issue #14).
+// check first.
 type Limiter struct {
 	max      int
 	duration time.Duration

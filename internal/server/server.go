@@ -77,7 +77,9 @@ type Server struct {
 	revision atomic.Int64
 
 	// now is the clock (time.Now, replaceable in tests to cross the
-	// enrolment window). replay refuses one-time codes already used.
+	// 15-minute setup and rotation windows and the 24-hour enrolment
+	// window). Every time limit of the server uses it, never time.Now
+	// directly. replay refuses one-time codes already used.
 	// dummySecret is checked when a sign-in names an unknown user, so that
 	// the response takes as long as for a real one.
 	now         func() time.Time

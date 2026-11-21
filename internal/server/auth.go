@@ -243,7 +243,7 @@ func (s *Server) handleSetupPIN(w http.ResponseWriter, r *http.Request) {
 	// browser confirms it scanned the code. If someone else enters the PIN
 	// meanwhile, their enrollment replaces this one.
 	s.mu.Lock()
-	s.pending = &pendingEnrollment{token: token, secret: enr.Secret, expires: time.Now().Add(enrollmentValid)}
+	s.pending = &pendingEnrollment{token: token, secret: enr.Secret, expires: s.now().Add(enrollmentValid)}
 	s.mu.Unlock()
 
 	setCookie(w, setupCookie, token)
@@ -264,7 +264,7 @@ func (s *Server) handleSetupConfirm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	p := s.pending
-	if err != nil || p == nil || !crypto.Equal(c.Value, p.token) || time.Now().After(p.expires) {
+	if err != nil || p == nil || !crypto.Equal(c.Value, p.token) || s.now().After(p.expires) {
 		writeError(w, http.StatusForbidden, "setup_expired", "This setup session has expired. Enter the PIN again.")
 		return
 	}

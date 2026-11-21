@@ -138,7 +138,7 @@ func (s *Server) handleRotate(w http.ResponseWriter, r *http.Request) {
 	}
 	ss := sessionFrom(r)
 	s.mu.Lock()
-	s.rotation = &pendingRotation{session: ss.Token, secret: enr.Secret, expires: s.now().Add(enrollmentValid)}
+	s.rotation = &pendingRotation{session: ss.Token, secret: enr.Secret, expires: s.now().Add(qrConfirmWindow)}
 	s.mu.Unlock()
 	s.log.Printf("[admin] %q generated a new QR code for the admin account (not yet active)", ss.Username)
 	writeJSON(w, http.StatusOK, enr)

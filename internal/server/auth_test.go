@@ -68,7 +68,7 @@ func TestSetupConfirmationExpires(t *testing.T) {
 	pin := h.srv.SetupPIN()
 	first := admin.expect(admin.do("POST", "/api/setup/pin", map[string]string{"pin": pin}), 200)
 
-	h.advance(enrollmentValid + time.Second)
+	h.advance(qrConfirmWindow + time.Second)
 	r := admin.expect(admin.do("POST", "/api/setup/confirm", nil), 403)
 	if r.body["code"] != "setup_expired" {
 		t.Fatalf("got %v", r.body)
@@ -81,7 +81,7 @@ func TestSetupConfirmationExpires(t *testing.T) {
 	if again.body["secret"] == first.body["secret"] {
 		t.Fatal("entering the PIN again must show a new secret")
 	}
-	h.advance(enrollmentValid - time.Second) // still inside the window
+	h.advance(qrConfirmWindow - time.Second) // still inside the window
 	admin.expect(admin.do("POST", "/api/setup/confirm", nil), 200)
 }
 

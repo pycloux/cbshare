@@ -37,17 +37,20 @@ const (
 	sessionCookie = "cbshare_session"
 	setupCookie   = "cbshare_setup"
 
-	maxUsernameLen  = 32
-	enrollmentValid = 15 * time.Minute
+	maxUsernameLen = 32
+
+	// qrConfirmWindow is how long the QR code shown at setup, or a new
+	// QR code for the admin account, waits for its confirmation.
+	qrConfirmWindow = 15 * time.Minute
 
 	// adminName is the admin account's name, reserved for it.
 	adminName = "admin"
 )
 
-// enrolmentWindow is how long a new QR code waits for its first sign-in
-// before it expires. It is a variable only so that test builds can shorten
+// firstSignInWindow is how long a new user's QR code waits for its first
+// sign-in before it expires. It is a variable only so that test builds can shorten
 // it (testhooks.go).
-var enrolmentWindow = 24 * time.Hour
+var firstSignInWindow = 24 * time.Hour
 
 // touch marks handlers whose requests count as user activity; background
 // requests (polling, event streams) do not keep a session alive.
@@ -243,7 +246,7 @@ func (s *Server) handleSetupPIN(w http.ResponseWriter, r *http.Request) {
 	// browser confirms it scanned the code. If someone else enters the PIN
 	// meanwhile, their enrollment replaces this one.
 	s.mu.Lock()
-	s.pending = &pendingEnrollment{token: token, secret: enr.Secret, expires: s.now().Add(enrollmentValid)}
+	s.pending = &pendingEnrollment{token: token, secret: enr.Secret, expires: s.now().Add(qrConfirmWindow)}
 	s.mu.Unlock()
 
 	setCookie(w, setupCookie, token)

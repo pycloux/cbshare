@@ -154,7 +154,7 @@ func TestRotationExpires(t *testing.T) {
 	admin.expect(admin.do("POST", "/api/admin/login", map[string]string{"password": "admin-pass"}), 200)
 
 	admin.expect(admin.do("POST", "/api/admin/rotate", nil), 200)
-	h.advance(enrollmentValid + time.Second)
+	h.advance(qrConfirmWindow + time.Second)
 	r := admin.expect(admin.do("POST", "/api/admin/rotate/confirm", nil), 409)
 	if r.body["code"] != "rotation_expired" {
 		t.Fatalf("got %v", r.body)
@@ -165,7 +165,7 @@ func TestRotationExpires(t *testing.T) {
 
 	// A fresh rotation confirmed in time still works.
 	admin.expect(admin.do("POST", "/api/admin/rotate", nil), 200)
-	h.advance(enrollmentValid - time.Second)
+	h.advance(qrConfirmWindow - time.Second)
 	admin.expect(admin.do("POST", "/api/admin/rotate/confirm", nil), 200)
 }
 

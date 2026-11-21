@@ -15,8 +15,8 @@ func init() {
 	// its first sign-in (24 hours), so that tests can see it expire. It can
 	// only shorten it.
 	if v := os.Getenv("CBSHARE_TEST_ENROLMENT_WINDOW"); v != "" {
-		if d, err := time.ParseDuration(v); err == nil && d > 0 && d < enrolmentWindow {
-			enrolmentWindow = d
+		if d, err := time.ParseDuration(v); err == nil && d > 0 && d < firstSignInWindow {
+			firstSignInWindow = d
 		}
 	}
 }

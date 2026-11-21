@@ -214,17 +214,9 @@ func (s *Server) PublicHost() string {
 	return net.JoinHostPort(host, strconv.Itoa(s.cfg.Port))
 }
 
-// Serve listens on the configured address and serves HTTPS until ctx is
-// cancelled, then shuts down gracefully.
-func (s *Server) Serve(ctx context.Context, cert tls.Certificate) error {
-	ln, err := net.Listen("tcp", s.Addr())
-	if err != nil {
-		return err
-	}
-	return s.ServeListener(ctx, ln, cert)
-}
-
-// ServeListener serves HTTPS on ln until ctx is cancelled.
+// ServeListener serves HTTPS on ln until ctx is cancelled, then shuts down
+// gracefully. The caller opens ln (main does, so that it can print
+// "listening on" only once the port is open).
 func (s *Server) ServeListener(ctx context.Context, ln net.Listener, cert tls.Certificate) error {
 	srv := &http.Server{
 		Handler:           s.Handler(),

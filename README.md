@@ -232,7 +232,7 @@ All in the encrypted database ([internal/store](internal/store)):
 
 **Ownership:** a message belongs to its `user_id`, not its name, since a deleted user's name can be reused. `loadOwnMessage` in [server/chat.go](internal/server/chat.go) allows edit and delete for that user or the admin; system messages can only be deleted, by the admin. Deleting a user sets `user_id` to NULL (`ON DELETE SET NULL`): the message stays, marked `authorDeleted`.
 
-**Schema version:** `PRAGMA user_version` is 2. Databases of v0.2 (version 1) are refused with `store.ErrOldSchema`; there is no migration.
+**Schema version:** `PRAGMA user_version` is 2. Databases in the old shared-code format (version 1, written only by cpsync v0.2, the project cbshare grew out of) are refused with `store.ErrOldSchema`; there is no migration.
 
 ### Live updates
 

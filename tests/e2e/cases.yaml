@@ -400,10 +400,10 @@ USR-13:
   priority: P2
   automation: automated
 USR-14:
-  title: "A v0.2 database is refused with a clear message"
+  title: "A database in the old shared-code format is refused with a clear message"
   priority: P2
   automation: manual
-  reason: "Needs a database created by cbshare v0.2; the Go test TestOldSchemaRefused covers the refusal."
+  reason: "Needs a database from cpsync v0.2 (no cbshare release wrote that format); the Go test TestOldSchemaRefused covers the refusal."
 SEC-01:
   title: "Security headers"
   priority: P1

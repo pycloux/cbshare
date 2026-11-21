@@ -96,6 +96,3 @@ cbshare --key GTR74-AKCYX-APMTM-LEY3F-PN2OG-554MX-W3SMB-GSY6T-QHHIB-TRQ5G-XB5QQ
 The key can also come from the `CBSHARE_KEY` environment variable. Dashes, spaces and letter case in the key don't matter, and a mistyped key is reported as such.
 
 After a restart there is no setup PIN: the users and their codes are read back from the database, and everyone signs in with the same app entry as before. Everyone does need to sign in again, because sessions are not kept across restarts.
-
-!!! warning "Upgrading from v0.2"
-    Databases created by cbshare v0.2 used one authenticator code shared by everyone. This version uses a separate code for each user and cannot open those databases; it stops with "this database was created by cbshare v0.2". Stop the old server, delete its database file (`cbshare.db`), and start again with `--password`. The old messages are lost, and everyone needs a new QR code.

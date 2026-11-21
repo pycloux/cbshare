@@ -184,12 +184,12 @@ func TestOldSchemaRefused(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	// Pretend this is a v0.2 database.
+	// Pretend this is a database in the old shared-code format (schema 1).
 	if _, err := s.db.Exec("PRAGMA user_version = 1"); err != nil {
 		t.Fatal(err)
 	}
 	s.Close()
 	if _, err := Open(path, testKey(5)); !errors.Is(err, ErrOldSchema) {
-		t.Fatalf("Open v0.2 database: %v", err)
+		t.Fatalf("Open schema 1 database: %v", err)
 	}
 }

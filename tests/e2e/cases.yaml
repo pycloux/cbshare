@@ -1,10 +1,11 @@
 # Every case of the manual test plan, with its priority and how it is covered.
 #
 #   automation: automated  a test in this folder is marked with this ID
-#               planned    will be automated in a later pull request (#19)
-#               manual     cannot be automated; stays in the manual test plan
+#               planned    not automated yet; to be done in a later pull request
+#               manual     cannot be automated; described in tests/manual-plan.md
 #               suite      covered by running the whole suite (no single test)
-#   manual_part: what remains manual for a case that is only partly automated
+#   manual_part: what remains manual for a case that is only partly automated;
+#               also described in tests/manual-plan.md
 #
 # tests/e2e/test_consistency.py checks that this file and the tests agree.
 

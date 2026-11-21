@@ -108,7 +108,7 @@ make cross        # Linux and Windows binaries in dist/
 
 Pushing a tag such as `v1.0.0` starts the release workflow. It runs the Go tests on Linux and Windows and the full external test suite (every automated case of the test plan in Chromium, Firefox and WebKit), then builds the archives and publishes them on GitHub. If any test fails, nothing is published: fix it, delete the tag, and push it again.
 
-Before announcing a release, run the [manual test plan](https://claude.ai/artifact/M6TvUvY8gc9KUiQKvpg6CW) on the published archives. It holds the 8 cases a machine can't check, such as real phones, a Windows server and arm64 hardware.
+Before announcing a release, run the [manual test plan](tests/manual-plan.md) on the published archives. It holds the 10 cases a machine can't check, such as real phones, a Windows server, arm64 hardware and the real 24-hour QR code window.
 
 ## How the application is built
 
@@ -290,6 +290,7 @@ All endpoints return JSON. "Session" means a valid session cookie; state-changin
 | `internal/server/*_test.go` | API tests against a real server with real cookies; helpers in [harness_test.go](internal/server/harness_test.go) |
 | `cmd/cbshare/main_test.go` | Builds the binary and runs first start, setup, sign-in, restart with the key |
 | [`tests/e2e`](tests/e2e) | External tests in Python (pytest + Playwright): the test plan's cases against the built program and real browsers, named by case ID |
+| [`tests/manual-plan.md`](tests/manual-plan.md) | The cases a machine can't check (real phones, Windows, arm64, screen readers, the real 24-hour QR window), run by hand before each release |
 
 Run the Go tests with `make test` (race detector included) or `go test ./...`; CI runs them on Linux and Windows. The external tests are described in [tests/e2e/README.md](tests/e2e/README.md); CI runs their P1 cases on every pull request, and every release runs them all. The few cases that need a person (real phones, Windows, arm64) are in the manual test plan linked under [Building from source](#building-from-source).
 

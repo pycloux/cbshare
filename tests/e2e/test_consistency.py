@@ -42,3 +42,23 @@ def test_cases_are_complete():
         assert c.get("automation") in ("automated", "planned", "manual", "suite"), cid
         if c["automation"] == "manual":
             assert c.get("reason"), f"{cid}: manual cases need a reason"
+
+
+def manual_plan_cases() -> dict[str, tuple[str, str]]:
+    """The cases of tests/manual-plan.md: {id: (title, priority)}."""
+    text = (HERE.parent / "manual-plan.md").read_text()
+    found = {}
+    for m in re.finditer(r"^### ([A-Z]+-\d+) (.+)$", text, re.M):
+        prio = re.search(r"\*\*Priority:\*\* (P[123])", text[m.end():])
+        found[m.group(1)] = (m.group(2).strip(), prio.group(1) if prio else "")
+    return found
+
+
+@pytest.mark.p1
+def test_manual_plan_matches_cases():
+    """tests/manual-plan.md describes exactly the cases with something left
+    to check by hand (automation manual or suite, or a manual_part), with
+    the same title and priority as cases.yaml."""
+    expected = {cid: (c["title"], c["priority"]) for cid, c in CASES.items()
+                if c["automation"] in ("manual", "suite") or c.get("manual_part")}
+    assert manual_plan_cases() == expected
